@@ -1,3 +1,6 @@
+package ie.patrickrobertson.dentist;
+
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
