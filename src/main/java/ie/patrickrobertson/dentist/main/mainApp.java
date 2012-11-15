@@ -1,13 +1,19 @@
 package ie.patrickrobertson.dentist.main;
 
-import ie.patrickrobertson.dentist.layout.MainWindow;
+
 
 public class mainApp {
 	
 	   public static void main(String[] args) {
-		
-		   MainWindow mW = new MainWindow();
-		   mW.setVisible(true);
+		   Object[][] data = {
+				    {"Patrick Robertson", "Filling",
+				     "10:00am"},
+				    {"Neil Shannon", "Lower Jaw Removal",
+				     "10:15am"},
+				    {"Geoff Wales", "Gag",
+				     "10:30am"},
+				};
+
 		   
 		   
 		    }
