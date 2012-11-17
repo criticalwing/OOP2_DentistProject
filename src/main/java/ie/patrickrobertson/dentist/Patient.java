@@ -7,10 +7,22 @@ import java.util.Date;
 public class Patient {
 	
 	private int patient;
-	private String patientName, patientAdd, patientPhone;
+	private String patientName, patientAdd, patientPhone, notes;
 	private ArrayList<Invoice> p_Invoice;
 	private ArrayList<History> p_History;
 		
+	public Patient(){
+		
+	}
+	
+	public Patient(int patient, String patientName, String patientAdd,
+			String patientPhone, String notes) {
+		this.patient = patient;
+		this.patientName = patientName;
+		this.patientAdd = patientAdd;
+		this.patientPhone = patientPhone;
+		this.notes = notes;
+	}
 	public Patient(int patient, String patientName, String patientAdd,
 			String patientPhone) {
 		this.patient = patient;
@@ -42,6 +54,14 @@ public class Patient {
 	}
 	public void setPatientPhone(String patientPhone) {
 		this.patientPhone = patientPhone;
+	}
+	
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 
 	public ArrayList<Invoice> getP_Invoice() {
@@ -101,10 +121,7 @@ public class Patient {
 	
 	@Override
 	public String toString() {
-		return "Patient [Patient=" + patient + ". PatientName=" + patientName
-				+ ", patientAdd=" + patientAdd + ", patientPhone="
-				+ patientPhone + ", p_Invoice=" + p_Invoice.toString() + ", p_History="
-				+ p_History.toString() + "]";
+		return  patientName + " " + patientAdd + " "+ patientPhone;
 	}
 
 }

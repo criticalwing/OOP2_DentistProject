@@ -18,7 +18,7 @@ public class BasicSetup {
 	@Test
 	public void createPatient(){
 		
-		Patient p = new Patient(1, "Jack Jones", "Cork, Ireland", "012 3456789");
+		Patient p = new Patient(1, "Jack Jones", "Cork, Ireland", "012 3456789", "Some Notes");
 		
 		assertEquals("Jack Jones", p.getPatientName());
 		assertEquals("Cork, Ireland", p.getPatientAdd());

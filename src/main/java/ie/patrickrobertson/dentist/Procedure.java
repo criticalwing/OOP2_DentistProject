@@ -12,6 +12,12 @@ public class Procedure {
 		this.procName = procName;
 		this.procCost = procCost;
 	}
+	
+	public Procedure(int proc,String procName, double procCost) {
+		this.proc = proc;
+		this.procName = procName;
+		this.procCost = procCost;
+	}
 
 	public int getProc() {
 		return proc;
