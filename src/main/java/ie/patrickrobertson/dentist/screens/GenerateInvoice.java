@@ -1,39 +1,86 @@
 package ie.patrickrobertson.dentist.screens;
 
+import ie.patrickrobertson.dentist.service.DataAccess;
+import ie.patrickrobertson.dentist.service.PatientTableModel;
+import ie.patrickrobertson.dentist.service.ProcedureTableModel;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.border.LineBorder;
+import javax.swing.table.TableModel;
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
+import java.awt.Component;
+import javax.swing.UIManager;
 
 public class GenerateInvoice extends LayoutTemplate {
 
 	private JLabel systemTypeLabel;
+	JLabel lblPatientToAdd = new JLabel();
+	JTextArea lblProceduresToAdd = new JTextArea();
+	JTable procedureListPanel = new JTable();
+	DataAccess dataAccess;
+	private JTable patientListPanel;
+	private JButton btnResetProc;
 
-	public GenerateInvoice() {
+	public GenerateInvoice(DataAccess dataAccess) {
+		
+		this.dataAccess = dataAccess;
+		
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		panel.setBackground(Color.WHITE);
-		panel.setBounds(10, 26, 292, 259);
+		panel.setBounds(10, 26, 292, 180);
+		
+		patientListPanel = new JTable(listPatients());
+		patientListPanel.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		patientListPanel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		patientListPanel.getColumnModel().getColumn(0).setPreferredWidth(35);
+		patientListPanel.getColumnModel().getColumn(1).setPreferredWidth(255);
+		panel.setLayout(null);
+		
+		JScrollPane patScroller = new JScrollPane(patientListPanel);
+		patScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		patScroller.setBounds(0, 0, 292, 180);
+		
+		panel.add(patScroller);
 		add(panel);
+
 		
 		JButton btnGenerateInvoice = new JButton("Generate Invoice");
 		btnGenerateInvoice.setBounds(458, 337, 146, 23);
 		add(btnGenerateInvoice);
 		
-		JButton btnAddProceedure = new JButton("Add Proceedure");
-		btnAddProceedure.setBounds(312, 296, 146, 23);
-		add(btnAddProceedure);
-		
-		JButton btnAddPatient = new JButton("Add Patient");
-		btnAddPatient.setBounds(10, 296, 105, 23);
-		add(btnAddPatient);
-		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		panel_1.setBackground(Color.WHITE);
-		panel_1.setBounds(312, 26, 292, 259);
+		panel_1.setBounds(312, 26, 292, 180);
+		
+		procedureListPanel = new JTable(listProcedures());
+		procedureListPanel.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		procedureListPanel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		procedureListPanel.getColumnModel().getColumn(0).setPreferredWidth(35);
+		procedureListPanel.getColumnModel().getColumn(1).setPreferredWidth(180);
+		panel.setLayout(null);
+		
+		JScrollPane procScroller = new JScrollPane(procedureListPanel);
+		procScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		procScroller.setBounds(0, 0, 292, 179);
+		panel_1.setLayout(null);
+		
+		panel_1.add(procScroller);
 		add(panel_1);
 		
 		JLabel lblProceedures = new JLabel("Proceedures");
@@ -50,10 +97,111 @@ public class GenerateInvoice extends LayoutTemplate {
 		lblSelectTheProceedures.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblSelectTheProceedures.setBounds(10, 346, 438, 14);
 		add(lblSelectTheProceedures);
+		
+		JLabel lblPatient = new JLabel("Patient:");
+		lblPatient.setBounds(10, 251, 46, 14);
+		add(lblPatient);
+		
+		lblPatientToAdd = new JLabel("Patient");
+		lblPatientToAdd.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblPatientToAdd.setBounds(10, 264, 292, 23);
+		add(lblPatientToAdd);
+		lblPatientToAdd.setVisible(false);
+		
+		JLabel lblProcedures = new JLabel("Procedures:");
+		lblProcedures.setBounds(312, 251, 146, 14);
+		add(lblProcedures);
+		
+		lblProceduresToAdd = new JTextArea("");
+		lblProceduresToAdd.setAlignmentY(Component.TOP_ALIGNMENT);
+		lblProceduresToAdd.setAlignmentX(Component.LEFT_ALIGNMENT);
+		lblProceduresToAdd.setLineWrap(true);
+		lblProceduresToAdd.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblProceduresToAdd.setEditable(false);
+		lblProceduresToAdd.setBackground(UIManager.getColor("EditorPane.disabledBackground"));
+		lblProceduresToAdd.setBorder(null);
+		lblProceduresToAdd.setBounds(312, 265, 292, 61);
+		add(lblProceduresToAdd);
+		lblProceduresToAdd.setVisible(false);
+		
+		JButton btnAddProceedure = new JButton("Add Proceedure");
+		btnAddProceedure.setBounds(312, 217, 136, 23);
+		btnAddProceedure.addActionListener(new addProcedureListener());
+		add(btnAddProceedure);
+		
+		JButton btnAddPatient = new JButton("Add Patient");
+		btnAddPatient.setBounds(10, 217, 105, 23);
+		btnAddPatient.addActionListener(new addPatientListener());
+		add(btnAddPatient);
+		
+		btnResetProc = new JButton("Reset");
+		btnResetProc.setBounds(458, 217, 89, 23);
+		add(btnResetProc);
+		btnResetProc.addActionListener(new addProcedureResetListener());
+		btnResetProc.setVisible(false);
+		
+		
 
 	}
 
 	public void setSystemLabelType(String title) {
 		systemTypeLabel.setText(title);
 	}
+	
+	private TableModel listPatients(){
+		return new PatientTableModel(dataAccess.getPatients(),2);
+		
+	}
+	
+	private TableModel listProcedures(){
+		return new ProcedureTableModel(dataAccess.getProcedures(),3);
+	}
+	
+	public class addPatientListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			lblPatientToAdd.setText("Test2");
+			lblPatientToAdd.setVisible(true);
+		}
+		
+	}
+	
+	public class addProcedureListener implements ActionListener{
+
+		
+		
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			double totalCost = 0;
+			String procList = lblProceduresToAdd.getText();
+			int[] selectedProcedures = procedureListPanel.getSelectedRows();
+			for (int i:selectedProcedures){
+			procList = procList.concat(((String) procedureListPanel.getModel().getValueAt(i, 1))).concat("\n");
+			totalCost += (Double)procedureListPanel.getModel().getValueAt(i, 2);
+			}
+			System.out.println(totalCost);
+			lblProceduresToAdd.setText(procList);
+			lblProceduresToAdd.setVisible(true);
+			btnResetProc.setVisible(true);
+		}
+		
+	}
+
+	public class addProcedureResetListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			lblProceduresToAdd.setText("");
+			lblProceduresToAdd.setVisible(false);
+			btnResetProc.setVisible(false);
+			
+		}
+		
+		
+		
+		
+	}
+
 }

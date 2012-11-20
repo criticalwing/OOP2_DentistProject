@@ -1,18 +1,22 @@
 package ie.patrickrobertson.dentist.service;
 
-import ie.patrickrobertson.dentist.Patient;
+import ie.patrickrobertson.dentist.Procedure;
 
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-public class PatientTableModel extends AbstractTableModel {
+public class ProcedureTableModel extends AbstractTableModel {
 
-	private List<Patient> patients;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -871339462145140734L;
+	private List<Procedure> procedures;
 	int columns;
 
-	public PatientTableModel(List<Patient> patients, int columns) {
-		this.patients = patients;
+	public ProcedureTableModel(List<Procedure> procedures, int columns) {
+		this.procedures = procedures;
 		this.columns = columns;
 	}
 
@@ -23,7 +27,7 @@ public class PatientTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return patients.size();
+		return procedures.size();
 	}
 
 	public String getColumnName(int columnIndex) {
@@ -31,11 +35,9 @@ public class PatientTableModel extends AbstractTableModel {
 		case 0:
 			return "ID";
 		case 1:
-			return "Name";
+			return "Procedure";
 		case 2:
-			return "Address";
-		case 3:
-			return "Contact";
+			return "Cost";
 		default:
 			return "x";
 		}
@@ -43,24 +45,17 @@ public class PatientTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Patient patient = patients.get(rowIndex);
+		Procedure procedure = procedures.get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
-			return patient.getPatient();
+			return procedure.getProc();
 		case 1:
-			return patient.getPatientName();
+			return procedure.getProcName();
 		case 2:
-			return patient.getPatientAdd();
-		case 3:
-			return patient.getPatientPhone();
+			return procedure.getProcCost();
 		default: return "x";
 		}
 	}
 
-	
-	
-	
-	
-	
 }

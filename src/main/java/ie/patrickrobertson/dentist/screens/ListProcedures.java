@@ -1,25 +1,53 @@
 package ie.patrickrobertson.dentist.screens;
 
+import ie.patrickrobertson.dentist.service.DataAccess;
+import ie.patrickrobertson.dentist.service.ProcedureTableModel;
+
 import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.TableModel;
 
 public class ListProcedures extends LayoutTemplate {
 
+	DataAccess dataAccess;
+	
 	/**
 	 * Create the panel.
 	 */
-	public ListProcedures() {
+	public ListProcedures(DataAccess dataAccess) {
+		this.dataAccess = dataAccess;
 
-		JPanel patientFirstName = new JPanel();
-		patientFirstName.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		patientFirstName.setBackground(Color.WHITE);
-		patientFirstName.setBounds(10, 26, 620, 220);
-		add(patientFirstName);
+		JPanel listOfProcedures = new JPanel();
+		listOfProcedures.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		listOfProcedures.setBackground(Color.WHITE);
+		listOfProcedures.setBounds(10, 26, 620, 220);
+		
+		JTable procedureListPanel = new JTable(listProcedures());
+		procedureListPanel.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		procedureListPanel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		procedureListPanel.getColumnModel().getColumn(0).setPreferredWidth(55);
+		procedureListPanel.getColumnModel().getColumn(1).setPreferredWidth(455);
+		procedureListPanel.getColumnModel().getColumn(2).setPreferredWidth(110);
+		listOfProcedures.setLayout(null);
+		
+		JScrollPane scroller = new JScrollPane(procedureListPanel);
+		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scroller.setBounds(0, 0, 620, 220);
+		
+		listOfProcedures.add(scroller);
+		
+		add(listOfProcedures);
+		
 		
 		JButton btnAddPatient = new JButton("Search");
 		btnAddPatient.setBounds(197, 333, 105, 23);
@@ -52,5 +80,7 @@ public class ListProcedures extends LayoutTemplate {
 		
 	}
 
-
+	private TableModel listProcedures(){
+		return new ProcedureTableModel(dataAccess.getProcedures(),3);
+	}
 }

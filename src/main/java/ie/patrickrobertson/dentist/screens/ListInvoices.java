@@ -1,5 +1,7 @@
 package ie.patrickrobertson.dentist.screens;
 
+import ie.patrickrobertson.dentist.service.DataAccess;
+
 import java.awt.Color;
 import java.awt.Font;
 
@@ -10,11 +12,10 @@ import javax.swing.border.LineBorder;
 
 public class ListInvoices extends LayoutTemplate {
 
-	/**
-	 * Create the panel.
-	 */
-	public ListInvoices() {
-
+	DataAccess dataAccess;
+	
+	public ListInvoices(DataAccess dataAccess) {
+		this.dataAccess = dataAccess;
 		JPanel patientFirstName = new JPanel();
 		patientFirstName.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		patientFirstName.setBackground(Color.WHITE);

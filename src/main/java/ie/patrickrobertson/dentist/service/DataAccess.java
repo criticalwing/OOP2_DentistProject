@@ -7,13 +7,17 @@ import java.util.ArrayList;
 
 public interface DataAccess {
 
-	ArrayList<Patient> retrievePatients();
+	ArrayList<Patient> getPatients();
 
-	ArrayList<Procedure> retrieveProcedures();
+	ArrayList<Procedure> getProcedures();
 
 	boolean savePatient();
 
 	boolean saveProcedure();
+	
+	void addPatient(Patient patient);
+	
+	void addProcedure(Procedure procedure);
 
 	String fullReport();
 

@@ -6,6 +6,7 @@ import ie.patrickrobertson.dentist.service.PatientTableModel;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -23,26 +24,30 @@ public class SearchPatients extends LayoutTemplate {
 	String patientName = "All";
 	int patientID = 0;
 	DataAccess dataAccess;
+	ArrayList<Patient> patients;
+	TableModel tableModel;
 	
 	public SearchPatients(DataAccess dataAccess) {
 
 		this.dataAccess = dataAccess;
+		patients = dataAccess.getPatients();
+		loadTableData();
 		
 		JPanel listOfPatients = new JPanel();
 		listOfPatients.setBackground(Color.WHITE);
 		listOfPatients.setBounds(10, 93, 620, 217);
 		listOfPatients.setLayout(null);
 
-		JTable patientListPanel = new JTable(listPatients(patientName,patientID));
+		JTable patientListPanel = new JTable(tableModel);
+		patientListPanel.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		patientListPanel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		patientListPanel.getColumnModel().getColumn(0).setPreferredWidth(10);
-		patientListPanel.getColumnModel().getColumn(1).setPreferredWidth(25);
-		patientListPanel.getColumnModel().getColumn(2).setPreferredWidth(35);
-		patientListPanel.getColumnModel().getColumn(3).setPreferredWidth(30);
-		
-		//setListData(listPatients(patientName,patientID));
+		patientListPanel.getColumnModel().getColumn(0).setPreferredWidth(25);
+		patientListPanel.getColumnModel().getColumn(1).setPreferredWidth(150);
+		patientListPanel.getColumnModel().getColumn(2).setPreferredWidth(310);
+		patientListPanel.getColumnModel().getColumn(3).setPreferredWidth(120);
 		
 		JScrollPane scroller = new JScrollPane(patientListPanel);
+		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scroller.setBounds(0, 0, 620, 217);
 		
@@ -89,10 +94,20 @@ public class SearchPatients extends LayoutTemplate {
 		add(btnEdit);
 
 	}
-
-	private TableModel listPatients(String patientName, int patientID){
-		return new PatientTableModel(dataAccess.retrievePatients());
-		
+	
+	public void loadTableData(){
+		tableModel = new PatientTableModel(patients,4);
 	}
+
+	public ArrayList<Patient> getPatients() {
+		return patients;
+	}
+
+	public void setPatients(ArrayList<Patient> patients) {
+		this.patients = patients;
+	}
+	
+	
+	
 
 }

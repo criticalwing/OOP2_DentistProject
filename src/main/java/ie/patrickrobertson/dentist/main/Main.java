@@ -3,6 +3,8 @@ package ie.patrickrobertson.dentist.main;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import ie.patrickrobertson.dentist.screens.AddPatient;
 import ie.patrickrobertson.dentist.screens.AddProcedure;
@@ -19,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 public class Main {
 
@@ -79,11 +82,11 @@ public class Main {
 	}
 
 	private void addPanels() {
-		generateInvoice = new GenerateInvoice();
-		addPatient = new AddPatient();
-		addProcedure = new AddProcedure();
-		listInvoices = new ListInvoices();
-		listProcedures = new ListProcedures();
+		generateInvoice = new GenerateInvoice(dataAccess);
+		addPatient = new AddPatient(dataAccess);
+		addProcedure = new AddProcedure(dataAccess);
+		listInvoices = new ListInvoices(dataAccess);
+		listProcedures = new ListProcedures(dataAccess);
 		searchPatients = new SearchPatients(dataAccess);
 		
 		
@@ -104,7 +107,7 @@ public class Main {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				addInvoiceScreen();
+				addPatientScreen();
 
 			}
 		});
@@ -225,13 +228,16 @@ public class Main {
 
 	private void generateInvoiceScreen() {
 		setVisibilities();
+		frame.remove(generateInvoice);
+		generateInvoice = new GenerateInvoice(dataAccess);		
+		frame.getContentPane().add(generateInvoice);
 		titleBlock.setPageTitleLabelText("Generate Invoice");
 
 		generateInvoice.setVisible(true);
 		titleBlock.setVisible(true);
 	}
 
-	private void addInvoiceScreen() {
+	private void addPatientScreen() {
 
 		setVisibilities();
 
@@ -240,7 +246,6 @@ public class Main {
 
 		addPatient.setVisible(true);
 		titleBlock.setVisible(true);
-
 	}
 
 	private void addProcedureScreen() {
@@ -256,6 +261,9 @@ public class Main {
 
 	private void listProceduresScreen() {
 		setVisibilities();
+		frame.remove(listProcedures);
+		listProcedures = new ListProcedures(dataAccess);		
+		frame.getContentPane().add(listProcedures);
 
 		titleBlock.setPageTitleLabelText("List Procedures");
 
@@ -266,19 +274,23 @@ public class Main {
 
 	private void listInvoicesScreen() {
 		setVisibilities();
-
+		//reload to ensure data is current
+		frame.remove(listInvoices);
+		listInvoices = new ListInvoices(dataAccess);		
+		frame.getContentPane().add(listInvoices);
 		titleBlock.setPageTitleLabelText("List Invoices");
-
-		listProcedures.setVisible(true);
+		listInvoices.revalidate();
+		listInvoices.setVisible(true);
 		titleBlock.setVisible(true);
 
 	}
 
 	protected void searchPatientsScreen() {
 		setVisibilities();
-
+		frame.remove(searchPatients);
+		searchPatients = new SearchPatients(dataAccess);		
+		frame.getContentPane().add(searchPatients);
 		titleBlock.setPageTitleLabelText("Search Patients");
-
 		searchPatients.setVisible(true);
 		titleBlock.setVisible(true);
 

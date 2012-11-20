@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class NonSerializedService implements DataAccess {
 
@@ -21,6 +22,16 @@ public class NonSerializedService implements DataAccess {
 		procedures = new ArrayList<Procedure>();
 		batchFullReport= new ArrayList<String>();
 		errorLog = new ArrayList<String>();
+		getData();
+	}
+	
+	private void getData(){
+		processLines(convertFiletoStrings("src/main/resources/NSPatientList"),
+				"~", "Patient");
+		processLines(
+				convertFiletoStrings("src/main/resources/NSProceduresList"),
+				"~", "Procedure");
+		
 	}
 
 	public NonSerializedService(ArrayList<Patient> patients,
@@ -65,7 +76,7 @@ public class NonSerializedService implements DataAccess {
 			if (type.equals("Procedure")) {
 				if (validateProcedureStringArray(parts, (sourceParts.indexOf(x) + 1))) {
 					procedures.add(new Procedure(Integer.valueOf(parts[0]),
-							parts[1], Double.valueOf("parts[2]")));
+							parts[1], Double.valueOf(parts[2])));
 				} else{
 					batchFullReport.add("*COULD NOT BE PROCESSED*, see Error Log");
 				}
@@ -73,7 +84,7 @@ public class NonSerializedService implements DataAccess {
 					if (validatePatientStringArray(parts, (sourceParts.indexOf(x) + 1))) {
 						Patient patient = new Patient(Integer.valueOf(parts[0]),
 								parts[1], parts[2], parts[3]);
-						System.out.print(patient.toString());
+						System.out.print(patient.toString().concat("\n"));
 						patients.add(patient);
 					}
 					else{
@@ -86,18 +97,12 @@ public class NonSerializedService implements DataAccess {
 
 	}
 
-	@Override
-	public ArrayList<Patient> retrievePatients() {
-		processLines(convertFiletoStrings("src/main/resources/NSPatientList"),
-				"-", "Patient");
+
+	public ArrayList<Patient> getPatients() {
 		return patients;
 	}
 
-	@Override
-	public ArrayList<Procedure> retrieveProcedures() {
-		processLines(
-				convertFiletoStrings("src/main/resources/NSProceduresList"),
-				"-", "Procedure");
+	public ArrayList<Procedure> getProcedures() {
 		return procedures;
 	}
 
@@ -231,5 +236,29 @@ public class NonSerializedService implements DataAccess {
 			return "";
 		}
 
+	}
+
+	
+	
+	@Override
+	public void addPatient(Patient patient) {
+		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
+		for(Patient p : patients){
+			tempIntArray.add(p.getPatient());
+		}
+		int i = Collections.max(tempIntArray);
+		patient.setPatient(i+1);
+		patients.add(patient);
+	}
+
+	@Override
+	public void addProcedure(Procedure procedure) {
+		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
+		for(Procedure p : procedures){
+			tempIntArray.add(p.getProc());
+		}
+		int i = Collections.max(tempIntArray);
+		procedure.setProc(i+1);
+		procedures.add(procedure);
 	}
 }

@@ -1,16 +1,12 @@
 package ie.patrickrobertson.dentist.screens;
 
 import ie.patrickrobertson.dentist.Patient;
-
-import java.awt.Color;
+import ie.patrickrobertson.dentist.service.DataAccess;
 import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,32 +22,18 @@ public class AddPatient extends LayoutTemplate {
 	private JTextField patientContactNo;
 	private JTextField patientNotes;
 	private JTextField patientSurname;
+	private JLabel lblPatientPatient;
+	private JButton btnAddPatient;
+	private DataAccess dataAccess;
 
-	public AddPatient() {
+	public AddPatient(final DataAccess dataAccess) {
+		this.dataAccess = dataAccess;
 
-		JButton btnAddPatient = new JButton("Add Patient");
+		btnAddPatient = new JButton("Add Patient");
 		btnAddPatient.setBorder(UIManager.getBorder("Button.border"));
 		btnAddPatient.setBounds(10, 223, 105, 23);
 		add(btnAddPatient);
-		btnAddPatient.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Patient patient = new Patient();
-				if (validateInput()) {
-					patient.setPatientName(patientFirstName.getText().concat(" ").concat(
-							patientSurname.getText()));
-					patient.setPatientAdd(patientAddress1.getText().concat(", ").concat(
-							patientAddress2.getText()));
-					patient.setPatientPhone(patientContactNo.getText());
-					if (patientNotes.getText() != null) {
-						patient.setNotes(patientNotes.getText());
-					JOptionPane.showMessageDialog(null,
-								patient.toString()+" added to the system");
-					}
-				}
-			}
-		});
+		btnAddPatient.addActionListener(new AddPatientListener());
 
 		JLabel lblProceedures = new JLabel("Patient Address 1");
 		lblProceedures.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -112,6 +94,12 @@ public class AddPatient extends LayoutTemplate {
 		patientSurname.setBounds(312, 29, 292, 20);
 		add(patientSurname);
 		patientSurname.setColumns(10);
+		
+		lblPatientPatient = new JLabel("Patient : Patient, added to the System.");
+		add(lblPatientPatient);
+		lblPatientPatient.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblPatientPatient.setBounds(10, 269, 355, 23);
+		lblPatientPatient.setVisible(false);
 
 	}
 
@@ -134,6 +122,46 @@ public class AddPatient extends LayoutTemplate {
 			return false;
 		}
 		return true;
+	}
+
+	public JButton getBtnAddPatient() {
+		return btnAddPatient;
+	}
+
+	public void setBtnAddPatient(JButton btnAddPatient) {
+		this.btnAddPatient = btnAddPatient;
+	}
+
+	public class AddPatientListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			Patient p = new Patient();
+			if (validateInput()) {
+				p.setPatientName(patientFirstName.getText().concat(" ")
+						.concat(patientSurname.getText()));
+				p.setPatientAdd(patientAddress1.getText().concat(", ")
+						.concat(patientAddress2.getText()));
+				p.setPatientPhone(patientContactNo.getText());
+				if (patientNotes.getText() != null) {
+					p.setNotes(patientNotes.getText());
+					dataAccess.addPatient(p);
+					lblPatientPatient.setText("Patient : ".concat(patientFirstName.getText())
+							.concat(" ").concat(patientSurname.getText()).concat(" added to the System"));
+					lblPatientPatient.setVisible(true);
+					setTextToBlank();
+				}
+			}
+		}
+	}
+
+	public void setTextToBlank() {
+		patientFirstName.setText("");
+		patientAddress1.setText("");
+		patientAddress2.setText("");
+		patientContactNo.setText("");
+		patientNotes.setText("");
+		patientSurname.setText("");
 	}
 
 }
