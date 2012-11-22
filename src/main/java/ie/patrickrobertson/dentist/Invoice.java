@@ -2,7 +2,8 @@ package ie.patrickrobertson.dentist;
 //need to add static incremental number for invoice number
 
 	import java.util.ArrayList;
-	import java.util.Date;
+import java.util.Calendar;
+import java.util.Date;
 	/*import java.text.DateFormat;
 	import java.text.SimpleDateFormat;*/
 	
@@ -11,11 +12,11 @@ public class Invoice {
 	
 	private int invoice;
 	private double invoiceAmt;
-	private Date invoiceDate;
+	private Calendar invoiceDate;
 	private boolean invoicePaid;
 	ArrayList<Procedure> procList;
 	
-	public Invoice(int invoice, Date invoiceDate,
+	public Invoice(int invoice, Calendar invoiceDate,
 			boolean invoicePaid, ArrayList<Procedure> procList) {
 		this.invoice = invoice;
 		this.invoiceDate = invoiceDate;
@@ -51,10 +52,10 @@ public class Invoice {
 	public void setInvoiceAmt(double invoiceAmt) {
 		this.invoiceAmt = invoiceAmt;
 	}
-	public Date getInvoiceDate() {
+	public Calendar getInvoiceDate() {
 		return invoiceDate;
 	}
-	public void setInvoiceDate(Date invoiceDate) {
+	public void setInvoiceDate(Calendar invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
 	public boolean isInvoicePaid() {

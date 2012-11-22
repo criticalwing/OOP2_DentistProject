@@ -2,6 +2,7 @@ package ie.patrickrobertson.dentist;
 //need to add static incremental number for patient number
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Patient {
@@ -12,7 +13,8 @@ public class Patient {
 	private ArrayList<History> p_History;
 		
 	public Patient(){
-		
+		p_Invoice = new ArrayList<Invoice>();
+		p_History = new ArrayList<History>();
 	}
 	
 	public Patient(int patient, String patientName, String patientAdd,
@@ -22,6 +24,8 @@ public class Patient {
 		this.patientAdd = patientAdd;
 		this.patientPhone = patientPhone;
 		this.notes = notes;
+		p_Invoice = new ArrayList<Invoice>();
+		p_History = new ArrayList<History>();
 	}
 	public Patient(int patient, String patientName, String patientAdd,
 			String patientPhone) {
@@ -29,6 +33,8 @@ public class Patient {
 		this.patientName = patientName;
 		this.patientAdd = patientAdd;
 		this.patientPhone = patientPhone;
+		p_Invoice = new ArrayList<Invoice>();
+		p_History = new ArrayList<History>();
 	}
 
 	public int getPatient() {
@@ -108,7 +114,7 @@ public class Patient {
 
 	//working methods
 	
-	public Invoice createNewPatientInvoice(double amount, ArrayList<Procedure> procList, Date date){
+	public Invoice createNewPatientInvoice(double amount, ArrayList<Procedure> procList, Calendar date){
 		
 		int invoiceNo = sizePatientInvoice()+1;
 		Invoice x = new Invoice(invoiceNo, date,

@@ -1,5 +1,6 @@
 package ie.patrickrobertson.dentist.service;
 
+import ie.patrickrobertson.dentist.Invoice;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
 
@@ -14,6 +15,7 @@ public class NonSerializedService implements DataAccess {
 
 	ArrayList<Patient> patients;
 	ArrayList<Procedure> procedures;
+	ArrayList<Invoice> invoices;
 	ArrayList<String> batchFullReport;
 	ArrayList<String> errorLog;
 	
@@ -21,6 +23,7 @@ public class NonSerializedService implements DataAccess {
 		patients = new ArrayList<Patient>();
 		procedures = new ArrayList<Procedure>();
 		batchFullReport= new ArrayList<String>();
+		invoices = new ArrayList<Invoice>();
 		errorLog = new ArrayList<String>();
 		getData();
 	}
@@ -96,7 +99,6 @@ public class NonSerializedService implements DataAccess {
 		}
 
 	}
-
 
 	public ArrayList<Patient> getPatients() {
 		return patients;
@@ -238,8 +240,6 @@ public class NonSerializedService implements DataAccess {
 
 	}
 
-	
-	
 	@Override
 	public void addPatient(Patient patient) {
 		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
@@ -260,5 +260,70 @@ public class NonSerializedService implements DataAccess {
 		int i = Collections.max(tempIntArray);
 		procedure.setProc(i+1);
 		procedures.add(procedure);
+	}
+
+	@Override
+	public ArrayList<Procedure> findProcedureByName(String name) {
+		ArrayList<Procedure> pList = new ArrayList<Procedure>();
+		for(Procedure p : procedures){
+			if(p.getProcName().contains(name)){
+			pList.add(p);
+			}
+		}
+		return pList;
+	}
+
+	@Override
+	public Procedure findProcedureByID(int ID) {
+		for(Procedure p : procedures){
+			if(ID == p.getProc()){
+				return p;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public ArrayList<Patient> findPatientByName(String name) {
+		ArrayList<Patient> pList = new ArrayList<Patient>();
+		for(Patient p : patients){
+			if(p.getPatientName().lastIndexOf(name)>0){
+				pList.add(p);
+			}
+		}
+		return pList;
+	}
+
+	@Override
+	public Patient findPatientByID(int ID) {
+		for(Patient p : patients){
+			if(ID == p.getPatient()){
+				return p;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public ArrayList<Invoice> getInvoices() {
+		for(Patient p : patients){
+			for(Invoice i: p.getP_Invoice()){
+				invoices.add(i);
+			}
+		}
+		return invoices;
+	}
+
+	@Override
+	public void deletePatient(Patient p) {
+		patients.remove(p);
+	}
+	
+
+	@Override
+	public void updatePatient(int ID, Patient updatePatient) {
+		findPatientByID(ID).setPatientName(updatePatient.getPatientName());
+		findPatientByID(ID).setPatientAdd(updatePatient.getPatientAdd());
+		findPatientByID(ID).setPatientPhone(updatePatient.getPatientPhone());
 	}
 }
