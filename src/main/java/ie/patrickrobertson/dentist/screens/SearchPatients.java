@@ -37,14 +37,20 @@ public class SearchPatients extends LayoutTemplate {
 	private JButton btnEdit;
 	private JTable patientListPanel;
 	private JButton btnDelete;
-	private JTextField textFieldPatientName;
-	private JTextField textField_1;
-	private JButton btnAddPatient;
+	private JTextField textFieldPatientSearchDetail;
+	private JButton btnSearchPatient;
+	private JLabel lblPatientName;
+	private JLabel lblPatientID;
+	private JRadioButton rdbtnSearchByID;
+	private JRadioButton rdbtnSearchByName;
+	private String searchType;
+	private String searchParameter;
 
-	public SearchPatients(DataAccess dataAccess) {
-
+	public SearchPatients(DataAccess dataAccess, String searchParameter) {
+		searchType = "ID";
+		this.searchParameter = searchParameter;
 		this.dataAccess = dataAccess;
-		patients = dataAccess.getPatients();
+		patients = setDataForTable(searchParameter);
 		loadTableData();
 
 		JPanel listOfPatients = new JPanel();
@@ -89,7 +95,7 @@ public class SearchPatients extends LayoutTemplate {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				
+
 			}
 		});
 
@@ -101,25 +107,25 @@ public class SearchPatients extends LayoutTemplate {
 		listOfPatients.add(scroller);
 		add(listOfPatients);
 
-		btnAddPatient = new JButton("Search");
-		btnAddPatient.setBounds(338, 53, 105, 23);
-		add(btnAddPatient);
+		btnSearchPatient = new JButton("Search");
+		btnSearchPatient.setBounds(338, 53, 105, 23);
+		add(btnSearchPatient);
 
 		JLabel lblNewLabel_1 = new JLabel("Results");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel_1.setBounds(10, 78, 197, 14);
 		add(lblNewLabel_1);
 
-		JLabel lblPatientName = new JLabel("Patient - Name");
+		lblPatientName = new JLabel("Patient - Name");
 		lblPatientName.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblPatientName.setBounds(10, 36, 139, 14);
 		add(lblPatientName);
 		lblPatientName.setVisible(false);
 
-		JLabel lblInvoiceDate = new JLabel("Patient - ID");
-		lblInvoiceDate.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblInvoiceDate.setBounds(10, 36, 139, 14);
-		add(lblInvoiceDate);
+		lblPatientID = new JLabel("Patient - ID");
+		lblPatientID.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblPatientID.setBounds(10, 36, 139, 14);
+		add(lblPatientID);
 
 		btnDelete = new JButton("Delete");
 		btnDelete.setBounds(491, 321, 139, 23);
@@ -130,37 +136,39 @@ public class SearchPatients extends LayoutTemplate {
 		btnEdit.setBounds(393, 321, 89, 23);
 		add(btnEdit);
 		btnEdit.setVisible(false);
-		
-		textFieldPatientName = new JTextField();
-		textFieldPatientName.setBounds(10, 54, 318, 20);
-		add(textFieldPatientName);
-		textFieldPatientName.setColumns(10);
-		textFieldPatientName.setVisible(false);
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(10, 54, 318, 20);
-		add(textField_1);
-		textField_1.setColumns(10);
-		
+
+		textFieldPatientSearchDetail = new JTextField();
+		textFieldPatientSearchDetail.setBounds(10, 54, 318, 20);
+		add(textFieldPatientSearchDetail);
+		textFieldPatientSearchDetail.setColumns(10);
+
 		ButtonGroup searchType = new ButtonGroup();
-		JRadioButton rdbtnSearchByID = new JRadioButton("SearchByID");
+		rdbtnSearchByID = new JRadioButton("SearchByID");
 		rdbtnSearchByID.setBounds(10, 7, 118, 23);
 		add(rdbtnSearchByID);
 		rdbtnSearchByID.setSelected(true);
 		searchType.add(rdbtnSearchByID);
-		
-		JRadioButton rdbtnSearchByName = new JRadioButton("Search By Name");
+
+		rdbtnSearchByName = new JRadioButton("Search By Name");
 		rdbtnSearchByName.setBounds(130, 7, 139, 23);
 		add(rdbtnSearchByName);
 		searchType.add(rdbtnSearchByName);
-		
+
 		rdbtnSearchByID.addActionListener(new rdbtnByIDListener());
 		rdbtnSearchByName.addActionListener(new rdbtnByNameListener());
-		
 
 	}
 
-	public void loadTableData() {
+	private ArrayList<Patient> setDataForTable(String searchParameter) {
+		if(searchParameter.equals("All")){
+		return dataAccess.getPatients();
+		}else{
+			return dataAccess.findPatientByName(searchParameter);
+		}
+		
+	}
+
+	private void loadTableData() {
 		tableModel = new PatientTableModel(patients, 4);
 	}
 
@@ -187,7 +195,6 @@ public class SearchPatients extends LayoutTemplate {
 	public void setBtnEdit(JButton btnEdit) {
 		this.btnEdit = btnEdit;
 	}
-	
 
 	public JButton getBtnDelete() {
 		return btnDelete;
@@ -196,27 +203,62 @@ public class SearchPatients extends LayoutTemplate {
 	public void setBtnDelete(JButton btnDelete) {
 		this.btnDelete = btnDelete;
 	}
-	
-	public class rdbtnByIDListener implements ActionListener{
+
+	public JButton getBtnSearchPatient() {
+		return btnSearchPatient;
+	}
+
+	public void setBtnSearchPatient(JButton btnSearchPatient) {
+		this.btnSearchPatient = btnSearchPatient;
+	}
+
+	public String getSearchParameter() {
+		return searchParameter;
+	}
+
+	public void setSearchParameter(String searchParameter) {
+		this.searchParameter = searchParameter;
+	}
+
+	public String getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
+
+	public JTextField getTextFieldPatientSearchDetail() {
+		return textFieldPatientSearchDetail;
+	}
+
+	public void setTextFieldPatientSearchDetail(
+			JTextField textFieldPatientSearchDetail) {
+		this.textFieldPatientSearchDetail = textFieldPatientSearchDetail;
+	}
+
+	public class rdbtnByIDListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	
+			lblPatientName.setVisible(false);
+			lblPatientID.setVisible(true);
+			searchType = "ID";
 
-	public class rdbtnByNameListener implements ActionListener{
+		}
+
+	}
+
+	public class rdbtnByNameListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			
+			lblPatientName.setVisible(true);
+			lblPatientID.setVisible(false);
+			searchType = "Name";
+
 		}
-		
+
 	}
-	
-	
+
 }

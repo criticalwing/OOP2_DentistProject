@@ -285,9 +285,10 @@ public class NonSerializedService implements DataAccess {
 
 	@Override
 	public ArrayList<Patient> findPatientByName(String name) {
+		name = name.toLowerCase();
 		ArrayList<Patient> pList = new ArrayList<Patient>();
 		for(Patient p : patients){
-			if(p.getPatientName().lastIndexOf(name)>0){
+			if(p.getPatientName().toLowerCase().contains(name)){
 				pList.add(p);
 			}
 		}
@@ -318,7 +319,6 @@ public class NonSerializedService implements DataAccess {
 	public void deletePatient(Patient p) {
 		patients.remove(p);
 	}
-	
 
 	@Override
 	public void updatePatient(int ID, Patient updatePatient) {

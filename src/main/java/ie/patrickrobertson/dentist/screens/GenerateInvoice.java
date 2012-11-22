@@ -32,6 +32,9 @@ import java.util.ArrayList;
 
 import javax.swing.UIManager;
 
+import net.sourceforge.jdatepicker.JDateComponentFactory;
+import net.sourceforge.jdatepicker.JDatePicker;
+
 public class GenerateInvoice extends LayoutTemplate {
 
 	private JLabel lblPatientToAdd = new JLabel();
@@ -47,11 +50,14 @@ public class GenerateInvoice extends LayoutTemplate {
 	private JButton btnGenerateInvoice;
 	private JButton btnAddPatient;
 	private JButton btnAddProceedure;
+	private JDatePicker datePicker;
 
 	public GenerateInvoice(DataAccess dataAccess) {
 
 		this.dataAccess = dataAccess;
 		procedures = new ArrayList<Procedure>();
+		datePicker = JDateComponentFactory.createJDatePicker();
+		datePicker.setShowYearButtons(false);
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));

@@ -98,7 +98,7 @@ public class Main {
 		addProcedure = new AddProcedure(dataAccess);
 		listInvoices = new ListInvoices(dataAccess);
 		listProcedures = new ListProcedures(dataAccess);
-		searchPatients = new SearchPatients(dataAccess);
+		searchPatients = new SearchPatients(dataAccess, "All");
 		invoiceScreen = new InvoiceScreen();
 		patientDetails = new PatientDetails();
 
@@ -126,13 +126,13 @@ public class Main {
 			}
 		});
 
-		JMenuItem mntmListPatients = new JMenuItem("Search Patients");
+		JMenuItem mntmListPatients = new JMenuItem("Patient Details");
 		mnPatients.add(mntmListPatients);
 		mntmListPatients.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				searchPatientsScreen();
+				searchPatientsScreen("All");
 
 			}
 		});
@@ -294,18 +294,20 @@ public class Main {
 
 	}
 
-	private void searchPatientsScreen() {
+	private void searchPatientsScreen(String searchParameter) {
 		setVisibilities();
 		frame.remove(searchPatients);
-		searchPatients = new SearchPatients(dataAccess);
+		searchPatients = new SearchPatients(dataAccess, searchParameter);
 		frame.getContentPane().add(searchPatients);
-		titleBlock.setPageTitleLabelText("Search Patients");
+		titleBlock.setPageTitleLabelText("Patient Details");
 		searchPatients.setVisible(true);
 		titleBlock.setVisible(true);
 		searchPatients.getBtnEdit().addActionListener(
 				new searchPatientsEditListener());
 		searchPatients.getBtnDelete().addActionListener(
 				new searchPatientDeleteListener());
+		searchPatients.getBtnSearchPatient().addActionListener(
+				new SearchPatientsSearchListener());
 
 	}
 
@@ -353,7 +355,7 @@ public class Main {
 				dataAccess.deletePatient(dataAccess
 						.findPatientByID(searchPatients.getPatientID()));
 				JOptionPane.showMessageDialog(null, "Patient Deleted");
-				searchPatientsScreen();
+				searchPatientsScreen("All");
 			}
 		}
 	}
@@ -379,11 +381,14 @@ public class Main {
 
 			dataAccess.updatePatient(Integer.parseInt(patientDetails
 					.getLblPatientID().getText()), updatePatient);
-			
-			JOptionPane.showMessageDialog(null, "Patient with ID: ".concat(patientDetails
-					.getLblPatientID().getText()).concat(" updated"));
-			
-			searchPatientsScreen();
+
+			JOptionPane.showMessageDialog(
+					null,
+					"Patient with ID: ".concat(
+							patientDetails.getLblPatientID().getText()).concat(
+							" updated"));
+
+			searchPatientsScreen("All");
 		}
 
 	}
@@ -392,7 +397,7 @@ public class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			searchPatientsScreen();
+			searchPatientsScreen("All");
 
 		}
 
@@ -447,4 +452,58 @@ public class Main {
 
 	}
 
+	public class SearchPatientsSearchListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (searchPatients.getSearchType().equals("ID")) {
+
+				searchByID(searchPatients.getTextFieldPatientSearchDetail()
+						.getText());
+
+			} else {
+				searchByName(searchPatients.getTextFieldPatientSearchDetail()
+						.getText());
+			}
+
+		}
+
+		private void searchByID(String ID) {
+
+			if (validInt(ID)) {
+				if (dataAccess.findPatientByID(Integer.valueOf(ID)) != null) {
+					patientDetailScreen(dataAccess.findPatientByID(Integer
+							.valueOf(ID)));
+				} else
+					JOptionPane.showMessageDialog(null,
+							"There are no Patients with ID: ".concat(ID));
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"You must enter a valid number");
+			}
+
+		}
+
+		private void searchByName(String Name) {
+			if (!dataAccess.findPatientByName(Name)
+					.isEmpty()) {
+				searchPatientsScreen(Name);
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"There are no Patients with name containing: "
+								.concat(Name));
+			}
+		}
+
+		private boolean validInt(String input) {
+
+			try {
+				Integer.valueOf(input);
+			} catch (NumberFormatException e) {
+				return false;
+			}
+			return true;
+		}
+
+	}
 }
