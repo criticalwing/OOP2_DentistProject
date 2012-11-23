@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -102,17 +103,11 @@ public class InvoiceScreen extends LayoutTemplate {
 		panel_2.setBackground(Color.WHITE);
 		panel_2.setBounds(10, 336, 251, 38);
 		add(panel_2);
-		panel_2.setLayout(null);
 
 		lblCostFigure = new JLabel(getTotalCost());
 		lblCostFigure.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblCostFigure.setBounds(170, 9, 56, 22);
+		lblCostFigure.setBounds(170, 9, 75, 22);
 		panel_2.add(lblCostFigure);
-
-		JLabel label = new JLabel("\u20AC");
-		label.setFont(new Font("Tahoma", Font.BOLD, 14));
-		label.setBounds(160, 13, 15, 14);
-		panel_2.add(label);
 
 		JLabel lblTotalCost = new JLabel("Total Invoice:");
 		lblTotalCost.setBounds(10, 320, 90, 14);
@@ -192,8 +187,10 @@ public class InvoiceScreen extends LayoutTemplate {
 		for(Procedure p : procedures){
 			cost += p.getProcCost();
 		}
-		return String.valueOf(cost);
-		
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setPositivePrefix("€");
+		df.setMinimumFractionDigits(2);
+		return df.format(cost/100);
 	}
 
 	private TableModel listProcedures(ArrayList<Procedure> procedures) {

@@ -19,6 +19,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 
 
@@ -34,11 +36,12 @@ public class PatientDetails extends LayoutTemplate {
 	private JButton btnSave;
 	private JLabel lblPatientID;
 	private JPanel panelPatientHistory;
-	private JTable HistoryListTable;
+	private JTable historyListTable;
 	private JScrollPane scroller2;
 	private JLabel lblHistory;
 	private JButton btnHistoryEdit;
 	private JButton btnHistoryDelete;
+	private JButton buttonAddHistory;
 
 	/**
 	 * Create the panel.
@@ -51,15 +54,15 @@ public class PatientDetails extends LayoutTemplate {
 		this.patient = patient;
 		
 		JLabel lblPatientNameTitle = new JLabel("Patient Name:");
-		lblPatientNameTitle.setBounds(10, 7, 117, 14);
+		lblPatientNameTitle.setBounds(109, 11, 117, 14);
 		add(lblPatientNameTitle);
 		
 		JLabel lblPatientAddressTitle = new JLabel("Patient Address:");
-		lblPatientAddressTitle.setBounds(10, 55, 117, 14);
+		lblPatientAddressTitle.setBounds(109, 57, 117, 14);
 		add(lblPatientAddressTitle);
 		
 		JLabel lblContacttitle = new JLabel("Contact:");
-		lblContacttitle.setBounds(10, 103, 117, 14);
+		lblContacttitle.setBounds(109, 101, 117, 14);
 		add(lblContacttitle);
 		
 		JLabel lblInvoicestitle = new JLabel("Invoices:");
@@ -67,7 +70,7 @@ public class PatientDetails extends LayoutTemplate {
 		add(lblInvoicestitle);
 		
 		textFieldPatientName = new JTextField();
-		textFieldPatientName.setBounds(10, 28, 304, 20);
+		textFieldPatientName.setBounds(109, 32, 304, 20);
 		add(textFieldPatientName);
 		textFieldPatientName.setColumns(10);
 		textFieldPatientName.setText(patient.getPatientName());
@@ -94,13 +97,13 @@ public class PatientDetails extends LayoutTemplate {
 		
 		textFieldPatientAddress = new JTextField();
 		textFieldPatientAddress.setColumns(10);
-		textFieldPatientAddress.setBounds(10, 76, 304, 20);
+		textFieldPatientAddress.setBounds(109, 78, 304, 20);
 		add(textFieldPatientAddress);
 		textFieldPatientAddress.setText(patient.getPatientAdd());
 		
 		textFieldContact = new JTextField();
 		textFieldContact.setColumns(10);
-		textFieldContact.setBounds(10, 124, 304, 20);
+		textFieldContact.setBounds(109, 122, 304, 20);
 		add(textFieldContact);
 		textFieldContact.setText(patient.getPatientPhone());
 		
@@ -127,21 +130,21 @@ public class PatientDetails extends LayoutTemplate {
 		panelInvoices.add(scroller);
 		add(panelInvoices);
 		
-		btnSave = new JButton("Save");
-		btnSave.setBounds(10, 354, 89, 23);
+		btnSave = new JButton("Save Changes");
+		btnSave.setBounds(496, 11, 135, 23);
 		add(btnSave);
 		
-		btnReset = new JButton("Reset");
-		btnReset.setBounds(109, 354, 89, 23);
+		btnReset = new JButton("Cancel");
+		btnReset.setBounds(496, 48, 135, 23);
 		add(btnReset);
 		
 		JLabel lblPatientId = new JLabel("Patient ID:");
-		lblPatientId.setBounds(344, 7, 89, 14);
+		lblPatientId.setBounds(10, 11, 89, 14);
 		add(lblPatientId);
 		
 		lblPatientID = new JLabel("");
 		lblPatientID.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblPatientID.setBounds(344, 20, 200, 38);
+		lblPatientID.setBounds(10, 24, 200, 38);
 		add(lblPatientID);
 		lblPatientID.setText(String.valueOf(patient.getPatient()));
 		
@@ -150,16 +153,46 @@ public class PatientDetails extends LayoutTemplate {
 		add(panelPatientHistory);
 		panelPatientHistory.setLayout(null);
 		
-		HistoryListTable = new JTable(listHistory());
-		HistoryListTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		HistoryListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		HistoryListTable.getColumnModel().getColumn(0).setPreferredWidth(25);
-		HistoryListTable.getColumnModel().getColumn(1).setPreferredWidth(115);
-		HistoryListTable.getColumnModel().getColumn(2).setPreferredWidth(95);
-		HistoryListTable.getColumnModel().getColumn(3).setPreferredWidth(50);
-
-		
-		scroller2 = new JScrollPane(HistoryListTable);
+		historyListTable = new JTable(listHistory());
+		historyListTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		historyListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		historyListTable.getColumnModel().getColumn(0).setPreferredWidth(25);
+		historyListTable.getColumnModel().getColumn(1).setPreferredWidth(85);
+		historyListTable.getColumnModel().getColumn(2).setPreferredWidth(95);
+		historyListTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+		historyListTable.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				btnHistoryEdit.setVisible(true);
+				btnHistoryDelete.setVisible(true);
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+			}
+		});
+		scroller2 = new JScrollPane(historyListTable);
 		scroller2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroller2.setBounds(0, 0, 286, 175);
@@ -169,7 +202,7 @@ public class PatientDetails extends LayoutTemplate {
 		lblHistory.setBounds(344, 151, 46, 14);
 		add(lblHistory);
 		
-		JButton buttonAddHistory = new JButton("Add");
+		buttonAddHistory = new JButton("Add");
 		buttonAddHistory.setBounds(344, 354, 89, 23);
 		add(buttonAddHistory);
 		
@@ -187,6 +220,27 @@ public class PatientDetails extends LayoutTemplate {
 	}
 
 	
+	
+	public Patient getPatient() {
+		return patient;
+	}
+
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
+
+
+	public JButton getButtonAddHistory() {
+		return buttonAddHistory;
+	}
+
+
+	public void setButtonAddHistory(JButton buttonAddHistory) {
+		this.buttonAddHistory = buttonAddHistory;
+	}
+
+
 	public JButton getBtnSave() {
 		return btnSave;
 	}
@@ -211,7 +265,6 @@ public class PatientDetails extends LayoutTemplate {
 		this.lblPatientID = lblPatientID;
 	}
 
-	
 	public JTextField getTextFieldPatientName() {
 		return textFieldPatientName;
 	}

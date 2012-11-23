@@ -20,6 +20,7 @@ import ie.patrickrobertson.dentist.Procedure;
 import ie.patrickrobertson.dentist.screens.AddPatient;
 import ie.patrickrobertson.dentist.screens.AddProcedure;
 import ie.patrickrobertson.dentist.screens.GenerateInvoice;
+import ie.patrickrobertson.dentist.screens.HistoryDetails;
 import ie.patrickrobertson.dentist.screens.InvoiceScreen;
 import ie.patrickrobertson.dentist.screens.ListInvoices;
 import ie.patrickrobertson.dentist.screens.ListProcedures;
@@ -50,6 +51,7 @@ public class Main {
 	private SearchPatients searchPatients;
 	private InvoiceScreen invoiceScreen;
 	private PatientDetails patientDetails;
+	private HistoryDetails historyDetails;
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenu mnPatients = new JMenu("Patients");
 	private final JMenu mnInvoicing = new JMenu("Invoicing");
@@ -105,6 +107,7 @@ public class Main {
 		searchPatients = new SearchPatients(dataAccess, "All");
 		invoiceScreen = new InvoiceScreen();
 		patientDetails = new PatientDetails();
+		historyDetails = new HistoryDetails();
 
 		frame.getContentPane().add(titleBlock);
 		frame.getContentPane().add(generateInvoice);
@@ -115,6 +118,7 @@ public class Main {
 		frame.getContentPane().add(searchPatients);
 		frame.getContentPane().add(invoiceScreen);
 		frame.getContentPane().add(patientDetails);
+		frame.getContentPane().add(historyDetails);
 	}
 
 	private void systemMenu() {
@@ -189,7 +193,7 @@ public class Main {
 		searchPatients.setVisible(false);
 		invoiceScreen.setVisible(false);
 		patientDetails.setVisible(false);
-
+		historyDetails.setVisible(false);
 	}
 
 	// the welcome screen sets the type of data Access to be used
@@ -331,8 +335,28 @@ public class Main {
 				new PatientDetailResetListener());
 		patientDetails.getBtnSave().addActionListener(
 				new PatientDetailSaveListener());
+		patientDetails.getButtonAddHistory().addActionListener(new PatientDetailAddHistoryListener());
 	}
 
+	private void historyDetailsScreen(Patient p){
+		setVisibilities();
+		// reload to ensure data is current
+		frame.remove(historyDetails);
+		historyDetails = new HistoryDetails(p);
+		frame.getContentPane().add(historyDetails);
+		titleBlock.setPageTitleLabelText("History Detail");
+		historyDetails.setVisible(true);
+	}
+	
+	public class PatientDetailAddHistoryListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			historyDetailsScreen(patientDetails.getPatient());
+		}
+		
+	}
+	
 	public class searchPatientDeleteListener implements ActionListener {
 
 		@Override
@@ -457,7 +481,7 @@ public class Main {
 				for (Invoice i : invoiceScreen.getPatient().getP_Invoice()) {
 					tempIntArray.add(i.getInvoice());
 				}
-				return Collections.max(tempIntArray);
+				return Collections.max(tempIntArray)+1;
 			}
 		}
 

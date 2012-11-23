@@ -29,6 +29,7 @@ import javax.swing.table.TableModel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Component;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -231,15 +232,10 @@ public class GenerateInvoice extends LayoutTemplate {
 		lblTotalCosttitle.setBounds(10, 335, 70, 14);
 		add(lblTotalCosttitle);
 
-		lblTotalCost = new JLabel("0.00");
+		lblTotalCost = new JLabel("€0.00");
 		lblTotalCost.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblTotalCost.setBounds(22, 349, 93, 14);
+		lblTotalCost.setBounds(12, 349, 93, 14);
 		add(lblTotalCost);
-
-		JLabel label = new JLabel("\u20AC");
-		label.setFont(new Font("Tahoma", Font.BOLD, 14));
-		label.setBounds(10, 349, 46, 14);
-		add(label);
 
 		btnAddPatientReset = new JButton("Reset");
 		btnAddPatientReset.setBounds(125, 217, 89, 23);
@@ -311,20 +307,23 @@ public class GenerateInvoice extends LayoutTemplate {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			double totalCost = Double.parseDouble(lblTotalCost.getText());
+			double totalCost = Double.parseDouble(lblTotalCost.getText().substring(1));
 			String procList = lblProceduresToAdd.getText();
 			int[] selectedProcedures = procedureListPanel.getSelectedRows();
 			for (int i : selectedProcedures) {
 				procList = procList.concat(
 						((String) procedureListPanel.getModel()
 								.getValueAt(i, 1))).concat("\n");
-				totalCost += (Double) procedureListPanel.getModel().getValueAt(
-						i, 2);
+				totalCost += Double.valueOf(((String) procedureListPanel.getModel().getValueAt(
+						i, 2)).substring(1));
 				procedures.add(dataAccess
 						.findProcedureByID((int) procedureListPanel.getModel()
 								.getValueAt(i, 0)));
 			}
-			lblTotalCost.setText(String.valueOf(totalCost));
+			DecimalFormat df = new DecimalFormat("#.##");
+			df.setPositivePrefix("€");
+			df.setMinimumFractionDigits(2);
+			lblTotalCost.setText(df.format(totalCost));
 			lblProceduresToAdd.setText(procList);
 			lblProceduresToAdd.setVisible(true);
 			btnResetProc.setVisible(true);

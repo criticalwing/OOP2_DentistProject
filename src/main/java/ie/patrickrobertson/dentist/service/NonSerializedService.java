@@ -1,5 +1,6 @@
 package ie.patrickrobertson.dentist.service;
 
+import ie.patrickrobertson.dentist.History;
 import ie.patrickrobertson.dentist.Invoice;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
@@ -9,7 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 public class NonSerializedService implements DataAccess {
 
@@ -18,23 +21,26 @@ public class NonSerializedService implements DataAccess {
 	ArrayList<Invoice> invoices;
 	ArrayList<String> batchFullReport;
 	ArrayList<String> errorLog;
-	
-	public NonSerializedService(){
+
+	public NonSerializedService() {
 		patients = new ArrayList<Patient>();
 		procedures = new ArrayList<Procedure>();
-		batchFullReport= new ArrayList<String>();
+		batchFullReport = new ArrayList<String>();
 		invoices = new ArrayList<Invoice>();
 		errorLog = new ArrayList<String>();
 		getData();
 	}
-	
-	private void getData(){
+
+	private void getData() {
 		processLines(convertFiletoStrings("src/main/resources/NSPatientList"),
 				"~", "Patient");
 		processLines(
 				convertFiletoStrings("src/main/resources/NSProceduresList"),
 				"~", "Procedure");
-		
+		processLines(
+				convertFiletoStrings("src/main/resources/NSPatientHistory"),
+				"~", "History");
+		System.out.print(errorLog.toString());
 	}
 
 	public NonSerializedService(ArrayList<Patient> patients,
@@ -77,27 +83,81 @@ public class NonSerializedService implements DataAccess {
 			String[] parts = x.split(delineator);
 
 			if (type.equals("Procedure")) {
-				if (validateProcedureStringArray(parts, (sourceParts.indexOf(x) + 1))) {
+				// checks if each of the parts of the array match up to the
+				// requirements in order to ensure no exceptions
+				// second part passes the line that is being processes so that
+				// any errors can be logged
+				if (validateProcedureStringArray(parts,
+						(sourceParts.indexOf(x) + 1))) {
 					procedures.add(new Procedure(Integer.valueOf(parts[0]),
-							parts[1], Double.valueOf(parts[2])));
-				} else{
-					batchFullReport.add("*COULD NOT BE PROCESSED*, see Error Log");
+							parts[1], Integer.valueOf(parts[2])));
+				} else {
+					batchFullReport
+							.add("*COULD NOT BE PROCESSED*, see Error Log");
 				}
-			}else if (type.equals("Patient")) {
-					if (validatePatientStringArray(parts, (sourceParts.indexOf(x) + 1))) {
-						Patient patient = new Patient(Integer.valueOf(parts[0]),
-								parts[1], parts[2], parts[3]);
-						System.out.print(patient.toString().concat("\n"));
-						patients.add(patient);
-					}
-					else{
-						batchFullReport.add("*COULD NOT BE PROCESSED*, see Error Log");
-					}
+			} else if (type.equals("Patient")) {
+				if (validatePatientStringArray(parts,
+						(sourceParts.indexOf(x) + 1))) {
+					Patient patient = new Patient(Integer.valueOf(parts[0]),
+							parts[1], parts[2], parts[3]);
+					System.out.print(patient.toString().concat("\n"));
+					patients.add(patient);
+				} else {
+					batchFullReport
+							.add("*COULD NOT BE PROCESSED*, see Error Log");
+				}
+			} else if (type.equals("History")) {
+				if (validatePatientHistoryStringArray(parts,
+						(sourceParts.indexOf(x) + 1))) {
+					History h = new History(Integer.parseInt(parts[1]),parts[2],parts[3],createDate(parts[4]));
+					findPatientByID(Integer.parseInt(parts[0])).getP_History().add(h);
+				} else {
+					batchFullReport
+							.add("*COULD NOT BE PROCESSED*, see Error Log");
+				}
 			} else {
-				batchFullReport.add("UNRECOGNISED TYPE, NO PROCESSING COULD BE COMPLETED");
+				batchFullReport
+						.add("UNRECOGNISED TYPE, NO PROCESSING COULD BE COMPLETED");
 			}
 		}
 
+	}
+
+	private Date createDate(String string) {
+		int[] parts = convertDateString(string);
+	    Calendar cal = Calendar.getInstance();
+	    cal.clear();
+	    
+	    cal.set(Calendar.YEAR, parts[2]);
+	    cal.set(Calendar.MONTH, parts[1]);
+	    cal.set(Calendar.DATE, parts[0]);
+
+	    return cal.getTime();
+	}
+
+	private boolean validatePatientHistoryStringArray(String[] parts,
+			int position) {
+
+		// check if array holds five elements for
+		// processing
+		if (parts.length != 5) {
+			errorLog.add("Line " + position
+					+ " does not contain the correct amount of elements");
+			return false;
+		}
+		// check that the first and second characters are ints
+		if (!validateInt(parts[0]) || !validateInt(parts[1])) {
+			errorLog.add("Line " + position
+					+ " does not contain a reference number");
+			return false;
+		}
+		// check that the final part is a date
+		if(validateDate(parts[4])){
+			errorLog.add("Line " + position
+					+ " does not contain a valid date");
+			return false;
+		}
+		return true;
 	}
 
 	public ArrayList<Patient> getPatients() {
@@ -154,8 +214,7 @@ public class NonSerializedService implements DataAccess {
 			return false;
 		}
 		if (!validateDouble(parts[2])) {
-			errorLog.add("Line " + position
-					+ " does not contain a valid price");
+			errorLog.add("Line " + position + " does not contain a valid price");
 			return false;
 		}
 		return true;
@@ -179,6 +238,64 @@ public class NonSerializedService implements DataAccess {
 		return true;
 	}
 
+	private boolean validateDate(String input) {
+		//takes the string input [1]and checks to see that it can be converted to a date
+		String[] parts = input.split("/");
+		
+		if(parts.length!=3){
+			return false;
+		}
+		for (String x : parts) {
+			if (!validateInt(x)) {
+				return false;
+			}
+		}
+		
+		int[] intParts = new int[parts.length];
+		for(int x = 0;x<intParts.length;x++){
+			intParts[x] = Integer.parseInt(parts[x]);
+		}
+		//ensure date is in the years between 2000 and 2050
+		if(intParts[2]<2000||intParts[2]>2050){
+			return false;
+		}
+		//ensure the month is between 1 and 12
+		if(intParts[1]>12||intParts[1]<1){
+			return false;
+		}
+		
+		//check that there are the correct amount of days for the given month
+		if(intParts[0]>1){
+			return false;
+		}
+		if(intParts[1]==9||intParts[1]==4||intParts[1]==6||intParts[1]==11){
+			if(intParts[0]>30){
+				return false;
+			}
+		}else if(intParts[1]==2){
+			if((intParts[2] % 400 == 0) || ((intParts[2] % 4 == 0) && (intParts[2] % 100 != 0))){
+				if(intParts[0]>29){
+					return false;
+				}
+			}else{
+				if(intParts[0]>28){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private int[] convertDateString(String input){
+		String[] parts = input.split("/");
+		int[] intParts = new int[parts.length];
+		for(int x = 0;x<intParts.length;x++){
+			intParts[x] = Integer.valueOf(parts[x]);
+		}
+		return intParts;
+		
+	}
+	
 	// String Report
 	// String Outputs
 	@Override
@@ -243,31 +360,31 @@ public class NonSerializedService implements DataAccess {
 	@Override
 	public void addPatient(Patient patient) {
 		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
-		for(Patient p : patients){
+		for (Patient p : patients) {
 			tempIntArray.add(p.getPatient());
 		}
 		int i = Collections.max(tempIntArray);
-		patient.setPatient(i+1);
+		patient.setPatient(i + 1);
 		patients.add(patient);
 	}
 
 	@Override
 	public void addProcedure(Procedure procedure) {
 		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
-		for(Procedure p : procedures){
+		for (Procedure p : procedures) {
 			tempIntArray.add(p.getProc());
 		}
 		int i = Collections.max(tempIntArray);
-		procedure.setProc(i+1);
+		procedure.setProc(i + 1);
 		procedures.add(procedure);
 	}
 
 	@Override
 	public ArrayList<Procedure> findProcedureByName(String name) {
 		ArrayList<Procedure> pList = new ArrayList<Procedure>();
-		for(Procedure p : procedures){
-			if(p.getProcName().contains(name)){
-			pList.add(p);
+		for (Procedure p : procedures) {
+			if (p.getProcName().contains(name)) {
+				pList.add(p);
 			}
 		}
 		return pList;
@@ -275,8 +392,8 @@ public class NonSerializedService implements DataAccess {
 
 	@Override
 	public Procedure findProcedureByID(int ID) {
-		for(Procedure p : procedures){
-			if(ID == p.getProc()){
+		for (Procedure p : procedures) {
+			if (ID == p.getProc()) {
 				return p;
 			}
 		}
@@ -287,8 +404,8 @@ public class NonSerializedService implements DataAccess {
 	public ArrayList<Patient> findPatientByName(String name) {
 		name = name.toLowerCase();
 		ArrayList<Patient> pList = new ArrayList<Patient>();
-		for(Patient p : patients){
-			if(p.getPatientName().toLowerCase().contains(name)){
+		for (Patient p : patients) {
+			if (p.getPatientName().toLowerCase().contains(name)) {
 				pList.add(p);
 			}
 		}
@@ -297,8 +414,8 @@ public class NonSerializedService implements DataAccess {
 
 	@Override
 	public Patient findPatientByID(int ID) {
-		for(Patient p : patients){
-			if(ID == p.getPatient()){
+		for (Patient p : patients) {
+			if (ID == p.getPatient()) {
 				return p;
 			}
 		}
@@ -307,8 +424,8 @@ public class NonSerializedService implements DataAccess {
 
 	@Override
 	public ArrayList<Invoice> getInvoices() {
-		for(Patient p : patients){
-			for(Invoice i: p.getP_Invoice()){
+		for (Patient p : patients) {
+			for (Invoice i : p.getP_Invoice()) {
 				invoices.add(i);
 			}
 		}

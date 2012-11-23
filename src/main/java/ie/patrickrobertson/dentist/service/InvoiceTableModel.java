@@ -1,6 +1,8 @@
 package ie.patrickrobertson.dentist.service;
 
 import ie.patrickrobertson.dentist.Invoice;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -54,7 +56,11 @@ public class InvoiceTableModel extends AbstractTableModel {
 		case 2:
 			return invoice.isInvoicePaid();
 		case 3:
-			return invoice.getInvoiceAmt();
+			Double x = ((double) invoice.getInvoiceAmt())/100;
+			DecimalFormat df = new DecimalFormat("#.##");
+			df.setPositivePrefix("€");
+			df.setMinimumFractionDigits(2);
+			return df.format(x);
 		default:
 			return "x";
 		}

@@ -2,6 +2,7 @@ package ie.patrickrobertson.dentist.service;
 
 import ie.patrickrobertson.dentist.Procedure;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -53,9 +54,13 @@ public class ProcedureTableModel extends AbstractTableModel {
 		case 1:
 			return procedure.getProcName();
 		case 2:
-			return procedure.getProcCost();
-		default: return "x";
+			Double x = ((double) procedure.getProcCost())/100;
+			DecimalFormat df = new DecimalFormat("#.##");
+			df.setPositivePrefix("€");
+			df.setMinimumFractionDigits(2);
+			return df.format(x);
+		default:
+			return "x";
 		}
 	}
-
 }

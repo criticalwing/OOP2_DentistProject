@@ -11,7 +11,8 @@ import java.util.Date;
 public class Invoice {
 	
 	private int invoice;
-	private double invoiceAmt;
+	//changed it to 'pennies' to sort calc issues
+	private int invoiceAmt;
 	private Date invoiceDate;
 	private boolean invoicePaid;
 	ArrayList<Procedure> procList;
@@ -26,9 +27,9 @@ public class Invoice {
 		
 	}
 	
-	private double getProcedureTotal(ArrayList<Procedure> procList) {
+	private int getProcedureTotal(ArrayList<Procedure> procList) {
 		
-		double total = 0;
+		int total = 0;
 		
 		for(Procedure p : procList){
 			
@@ -49,7 +50,7 @@ public class Invoice {
 	public double getInvoiceAmt() {
 		return invoiceAmt;
 	}
-	public void setInvoiceAmt(double invoiceAmt) {
+	public void setInvoiceAmt(int invoiceAmt) {
 		this.invoiceAmt = invoiceAmt;
 	}
 	public Date getInvoiceDate() {

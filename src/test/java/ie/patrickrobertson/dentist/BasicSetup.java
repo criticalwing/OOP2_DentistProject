@@ -29,7 +29,7 @@ public class BasicSetup {
 	@Test
 	public void createProcedure(){
 		
-		Procedure x = new Procedure("Test Procedure", 150.00);
+		Procedure x = new Procedure("Test Procedure", 150);
 		
 		assertEquals("Test Procedure", x.getProcName());		
 		

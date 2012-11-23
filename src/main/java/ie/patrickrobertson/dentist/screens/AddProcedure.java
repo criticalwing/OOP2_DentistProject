@@ -108,7 +108,7 @@ public class AddProcedure extends LayoutTemplate {
 					"You must enter a Procedure Name");
 			return false;
 		}
-		if (procCost.getText().equals("") || !validDouble(procCost.getText())) {
+		if (procCost.getText().equals("") || !validInt(procCost.getText())) {
 			JOptionPane.showMessageDialog(null,
 					"You must enter a price in Euros");
 			return false;
@@ -116,9 +116,9 @@ public class AddProcedure extends LayoutTemplate {
 		return true;
 	}
 
-	private boolean validDouble(String input) {
+	private boolean validInt(String input) {
 		try {
-			Double.parseDouble(input);
+			int x = (int)Double.parseDouble(input)*100;
 		} catch (NumberFormatException e) {
 			return false;
 		}
@@ -131,8 +131,9 @@ public class AddProcedure extends LayoutTemplate {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (validateInput()) {
+				double d = Double.parseDouble(procCost.getText())*100;
 				Procedure p = new Procedure(procName.getText(),
-						Double.parseDouble(procCost.getText()));
+						(int)d);
 				dataAccess.addProcedure(p);
 
 				lblProcedureAdded.setText("Procedure ".concat(

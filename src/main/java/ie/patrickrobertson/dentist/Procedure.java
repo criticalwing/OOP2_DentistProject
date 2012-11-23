@@ -6,14 +6,15 @@ public class Procedure {
 
 	private int proc;
 	private String procName;
-	private double procCost;
+	//changed it to 'pennies' to sort calc issues
+	private int procCost;
 	
-	public Procedure(String procName, double procCost) {
+	public Procedure(String procName, int procCost) {
 		this.procName = procName;
 		this.procCost = procCost;
 	}
 	
-	public Procedure(int proc,String procName, double procCost) {
+	public Procedure(int proc,String procName, int procCost) {
 		this.proc = proc;
 		this.procName = procName;
 		this.procCost = procCost;
@@ -35,11 +36,11 @@ public class Procedure {
 		this.procName = procName;
 	}
 
-	public double getProcCost() {
+	public int getProcCost() {
 		return procCost;
 	}
 
-	public void setProcCost(double procCost) {
+	public void setProcCost(int procCost) {
 		this.procCost = procCost;
 	}
 
