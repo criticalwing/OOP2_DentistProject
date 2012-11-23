@@ -9,7 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableModel;
@@ -19,6 +21,8 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import java.awt.FlowLayout;
+import java.awt.Component;
 
 public class InvoiceScreen extends LayoutTemplate {
 
@@ -28,15 +32,20 @@ public class InvoiceScreen extends LayoutTemplate {
 	JLabel lblPatientName, lblCostFigure, lblPatientAddress, lblPatientContact;
 	private JButton btnReset;
 	private JButton btnSaveInvoice;
+	private Date today;
 
 
-	public InvoiceScreen() {
-		// TODO Auto-generated constructor stub
+	public InvoiceScreen(){
+		
 	}
 	
-	public InvoiceScreen(Patient p, ArrayList<Procedure> procedures) {
+	public InvoiceScreen(Patient p, ArrayList<Procedure> procedures, Date today) {
 		this.patient = p;
 		this.procedures = procedures;
+		this.today = today;
+		SimpleDateFormat month = new SimpleDateFormat("MMMMMMMM");
+		SimpleDateFormat day = new SimpleDateFormat("dd");
+		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 
 		JLabel lblPatientDetailsTitle = new JLabel("Patient Details:");
 		lblPatientDetailsTitle.setBounds(10, 11, 138, 14);
@@ -91,7 +100,7 @@ public class InvoiceScreen extends LayoutTemplate {
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
 		panel_2.setBackground(Color.WHITE);
-		panel_2.setBounds(10, 284, 251, 38);
+		panel_2.setBounds(10, 336, 251, 38);
 		add(panel_2);
 		panel_2.setLayout(null);
 
@@ -106,7 +115,7 @@ public class InvoiceScreen extends LayoutTemplate {
 		panel_2.add(label);
 
 		JLabel lblTotalCost = new JLabel("Total Invoice:");
-		lblTotalCost.setBounds(10, 268, 90, 14);
+		lblTotalCost.setBounds(10, 320, 90, 14);
 		add(lblTotalCost);
 
 		btnSaveInvoice = new JButton("Save Invoice");
@@ -116,8 +125,34 @@ public class InvoiceScreen extends LayoutTemplate {
 		btnReset = new JButton("Reset");
 		btnReset.setBounds(410, 28, 89, 23);
 		add(btnReset);
+		
+		JLabel lblDate = new JLabel("Date:");
+		lblDate.setBounds(10, 268, 46, 14);
+		add(lblDate);
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setAlignmentY(Component.TOP_ALIGNMENT);
+		panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
+		panel_3.setBackground(Color.WHITE);
+		panel_3.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
+		panel_3.setBounds(10, 284, 251, 31);
+		add(panel_3);
+		panel_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lblDay = new JLabel(day.format(today));
+		lblDay.setFont(new Font("Tahoma", Font.BOLD, 14));
+		panel_3.add(lblDay);
+		
+		JLabel lblMonth = new JLabel(month.format(today));
+		lblMonth.setFont(new Font("Tahoma", Font.BOLD, 14));
+		panel_3.add(lblMonth);
+		
+		JLabel lblYear = new JLabel(year.format(today));
+		lblYear.setFont(new Font("Tahoma", Font.BOLD, 14));
+		panel_3.add(lblYear);
 
 	}
+
 
 	public JButton getBtnReset() {
 		return btnReset;

@@ -9,7 +9,8 @@ package ie.patrickrobertson.dentist;
 public class History {
 	
 	private int histID;
-	private String conditionName, medication;
+	private String conditionName;
+	private String medication;
 	private Date dateOccured;
 	
 	public History(int histID, String conditionName, String medication,
@@ -59,15 +60,7 @@ public class History {
 				+ "]";
 	}
 	
-	
 
-/*	private String getDateTime() {
-	    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-	    Date date = new Date();
-	    return dateFormat.format(date);
-	}*/
-	
-	
 	
 
 }

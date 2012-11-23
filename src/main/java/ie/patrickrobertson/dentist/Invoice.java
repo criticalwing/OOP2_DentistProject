@@ -12,14 +12,14 @@ public class Invoice {
 	
 	private int invoice;
 	private double invoiceAmt;
-	private Calendar invoiceDate;
+	private Date invoiceDate;
 	private boolean invoicePaid;
 	ArrayList<Procedure> procList;
 	
-	public Invoice(int invoice, Calendar invoiceDate,
+	public Invoice(int invoice, Date date,
 			boolean invoicePaid, ArrayList<Procedure> procList) {
 		this.invoice = invoice;
-		this.invoiceDate = invoiceDate;
+		this.invoiceDate = date;
 		this.invoicePaid = invoicePaid;
 		this.procList = procList;
 		invoiceAmt = getProcedureTotal(procList);		
@@ -52,10 +52,10 @@ public class Invoice {
 	public void setInvoiceAmt(double invoiceAmt) {
 		this.invoiceAmt = invoiceAmt;
 	}
-	public Calendar getInvoiceDate() {
+	public Date getInvoiceDate() {
 		return invoiceDate;
 	}
-	public void setInvoiceDate(Calendar invoiceDate) {
+	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
 	public boolean isInvoicePaid() {

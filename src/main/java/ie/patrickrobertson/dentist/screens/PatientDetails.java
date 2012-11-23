@@ -1,6 +1,7 @@
 package ie.patrickrobertson.dentist.screens;
 
 import ie.patrickrobertson.dentist.Patient;
+import ie.patrickrobertson.dentist.service.HistoryTableModel;
 import ie.patrickrobertson.dentist.service.InvoiceTableModel;
 
 import javax.swing.JPanel;
@@ -19,6 +20,8 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+
+
 public class PatientDetails extends LayoutTemplate {
 	private JTextField textFieldPatientName;
 	private JTextField textFieldPatientAddress;
@@ -30,10 +33,20 @@ public class PatientDetails extends LayoutTemplate {
 	private JButton btnReset;
 	private JButton btnSave;
 	private JLabel lblPatientID;
+	private JPanel panelPatientHistory;
+	private JTable HistoryListTable;
+	private JScrollPane scroller2;
+	private JLabel lblHistory;
+	private JButton btnHistoryEdit;
+	private JButton btnHistoryDelete;
 
 	/**
 	 * Create the panel.
 	 */
+	public PatientDetails(){
+		
+	}
+	
 	public PatientDetails(final Patient patient) {
 		this.patient = patient;
 		
@@ -100,10 +113,10 @@ public class PatientDetails extends LayoutTemplate {
 		InvoiceListTable = new JTable(listInvoices());
 		InvoiceListTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		InvoiceListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		InvoiceListTable.getColumnModel().getColumn(0).setPreferredWidth(55);
-		InvoiceListTable.getColumnModel().getColumn(1).setPreferredWidth(85);
-		InvoiceListTable.getColumnModel().getColumn(2).setPreferredWidth(80);
-		InvoiceListTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+		InvoiceListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+		InvoiceListTable.getColumnModel().getColumn(1).setPreferredWidth(105);
+		InvoiceListTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		InvoiceListTable.getColumnModel().getColumn(3).setPreferredWidth(73);
 
 		
 		scroller = new JScrollPane(InvoiceListTable);
@@ -132,13 +145,48 @@ public class PatientDetails extends LayoutTemplate {
 		add(lblPatientID);
 		lblPatientID.setText(String.valueOf(patient.getPatient()));
 		
+		panelPatientHistory = new JPanel();
+		panelPatientHistory.setBounds(344, 172, 286, 175);
+		add(panelPatientHistory);
+		panelPatientHistory.setLayout(null);
+		
+		HistoryListTable = new JTable(listHistory());
+		HistoryListTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		HistoryListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		HistoryListTable.getColumnModel().getColumn(0).setPreferredWidth(25);
+		HistoryListTable.getColumnModel().getColumn(1).setPreferredWidth(115);
+		HistoryListTable.getColumnModel().getColumn(2).setPreferredWidth(95);
+		HistoryListTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+
+		
+		scroller2 = new JScrollPane(HistoryListTable);
+		scroller2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroller2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scroller2.setBounds(0, 0, 286, 175);
+		panelPatientHistory.add(scroller2);
+		
+		lblHistory = new JLabel("History:");
+		lblHistory.setBounds(344, 151, 46, 14);
+		add(lblHistory);
+		
+		JButton buttonAddHistory = new JButton("Add");
+		buttonAddHistory.setBounds(344, 354, 89, 23);
+		add(buttonAddHistory);
+		
+		btnHistoryEdit = new JButton("Edit");
+		btnHistoryEdit.setBounds(443, 354, 89, 23);
+		add(btnHistoryEdit);
+		btnHistoryEdit.setVisible(false);
+		
+		btnHistoryDelete = new JButton("Delete");
+		btnHistoryDelete.setBounds(542, 354, 89, 23);
+		add(btnHistoryDelete);
+		btnHistoryDelete.setVisible(false);
+		
 
 	}
 
-	public PatientDetails() {
-		// TODO Auto-generated constructor stub
-	}
-
+	
 	public JButton getBtnSave() {
 		return btnSave;
 	}
@@ -190,5 +238,9 @@ public class PatientDetails extends LayoutTemplate {
 
 	private TableModel listInvoices() {
 		return new InvoiceTableModel(patient.getP_Invoice(),4);
+	}
+	
+	private TableModel listHistory() {
+		return new HistoryTableModel(patient.getP_History(),4);
 	}
 }

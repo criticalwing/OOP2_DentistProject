@@ -5,9 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import ie.patrickrobertson.dentist.Invoice;
@@ -281,19 +285,6 @@ public class Main {
 
 	}
 
-	private void listInvoicesScreen() {
-		setVisibilities();
-		// reload to ensure data is current
-		frame.remove(listInvoices);
-		listInvoices = new ListInvoices(dataAccess);
-		frame.getContentPane().add(listInvoices);
-		titleBlock.setPageTitleLabelText("List Invoices");
-		listInvoices.revalidate();
-		listInvoices.setVisible(true);
-		titleBlock.setVisible(true);
-
-	}
-
 	private void searchPatientsScreen(String searchParameter) {
 		setVisibilities();
 		frame.remove(searchPatients);
@@ -311,11 +302,11 @@ public class Main {
 
 	}
 
-	private void invoiceScreen(Patient p, ArrayList<Procedure> procedures) {
+	private void invoiceScreen(Patient p, ArrayList<Procedure> procedures, Date date) {
 		setVisibilities();
 		// reload to ensure data is current
 		frame.remove(invoiceScreen);
-		invoiceScreen = new InvoiceScreen(p, procedures);
+		invoiceScreen = new InvoiceScreen(p, procedures, date);
 		frame.getContentPane().add(invoiceScreen);
 		titleBlock.setPageTitleLabelText("Patient Invoice");
 		invoiceScreen.setVisible(true);
@@ -324,7 +315,7 @@ public class Main {
 		invoiceScreen.getBtnReset().addActionListener(
 				new invoiceResetListener());
 		invoiceScreen.getBtnSaveInvoice().addActionListener(
-				new invoiceSaveListener());
+				new invoiceSaveListener(date));
 	}
 
 	private void patientDetailScreen(Patient p) {
@@ -409,7 +400,22 @@ public class Main {
 		public void actionPerformed(ActionEvent arg0) {
 			Patient p = generateInvoice.getPatient();
 			ArrayList<Procedure> pA = generateInvoice.getProcedures();
-			invoiceScreen(p, pA);
+			Date today = new Date();
+			DateFormat df = new SimpleDateFormat("dd/MMMMMMM/yyyy");
+			String date = ((String) generateInvoice.getDp().getComboBoxDay()
+					.getSelectedItem()).concat("/").concat(((String) generateInvoice
+					.getDp().getComboBoxMonth().getSelectedItem()).concat("/")
+					.concat((String) generateInvoice.getDp().getComboBoxYear()
+							.getSelectedItem()));
+
+				try {
+					today = df.parse(date);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			invoiceScreen(p, pA, today);
 		}
 
 	}
@@ -426,10 +432,15 @@ public class Main {
 
 	public class invoiceSaveListener implements ActionListener {
 
+		Date date;
+		
+		public invoiceSaveListener(Date date) {
+			this.date = date;
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Calendar today = GregorianCalendar.getInstance();
-			Invoice i = new Invoice(getNextInvoiceNo(), today, false,
+			Invoice i = new Invoice(getNextInvoiceNo(), date, false,
 					invoiceScreen.getProcedures());
 			invoiceScreen.getPatient().addPatientInvoice(i);
 			JOptionPane.showMessageDialog(null, "Invoice added to Patient: "
@@ -485,8 +496,7 @@ public class Main {
 		}
 
 		private void searchByName(String Name) {
-			if (!dataAccess.findPatientByName(Name)
-					.isEmpty()) {
+			if (!dataAccess.findPatientByName(Name).isEmpty()) {
 				searchPatientsScreen(Name);
 			} else {
 				JOptionPane.showMessageDialog(null,

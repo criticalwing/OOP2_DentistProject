@@ -114,7 +114,7 @@ public class Patient {
 
 	//working methods
 	
-	public Invoice createNewPatientInvoice(double amount, ArrayList<Procedure> procList, Calendar date){
+	public Invoice createNewPatientInvoice(double amount, ArrayList<Procedure> procList, Date date){
 		
 		int invoiceNo = sizePatientInvoice()+1;
 		Invoice x = new Invoice(invoiceNo, date,

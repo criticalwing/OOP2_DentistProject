@@ -3,6 +3,7 @@ package ie.patrickrobertson.dentist.screens;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
 import ie.patrickrobertson.dentist.service.DataAccess;
+import ie.patrickrobertson.dentist.service.JDateChooser;
 import ie.patrickrobertson.dentist.service.PatientTableModel;
 import ie.patrickrobertson.dentist.service.ProcedureTableModel;
 
@@ -28,12 +29,13 @@ import javax.swing.table.TableModel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Component;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.UIManager;
+import javax.swing.JComboBox;
 
-import net.sourceforge.jdatepicker.JDateComponentFactory;
-import net.sourceforge.jdatepicker.JDatePicker;
 
 public class GenerateInvoice extends LayoutTemplate {
 
@@ -50,15 +52,16 @@ public class GenerateInvoice extends LayoutTemplate {
 	private JButton btnGenerateInvoice;
 	private JButton btnAddPatient;
 	private JButton btnAddProceedure;
-	private JDatePicker datePicker;
+	private JDateChooser dateChooser;
+	private JButton btnSelectDifferentDate;
+	private JLabel lblDate;
+	private SimpleDateFormat df;
+	private DatePicker dp;
 
 	public GenerateInvoice(DataAccess dataAccess) {
-
+		df = new SimpleDateFormat("dd/MM/yyyy");
 		this.dataAccess = dataAccess;
 		procedures = new ArrayList<Procedure>();
-		datePicker = JDateComponentFactory.createJDatePicker();
-		datePicker.setShowYearButtons(false);
-
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		panel.setBackground(Color.WHITE);
@@ -163,7 +166,7 @@ public class GenerateInvoice extends LayoutTemplate {
 		JScrollPane procScroller = new JScrollPane(procedureListPanel);
 		procScroller
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		procScroller.setBounds(0, 0, 292, 179);
+		procScroller.setBounds(0, 0, 292, 180);
 		panel_1.setLayout(null);
 
 		panel_1.add(procScroller);
@@ -178,12 +181,6 @@ public class GenerateInvoice extends LayoutTemplate {
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNewLabel_1.setBounds(10, 11, 70, 14);
 		add(lblNewLabel_1);
-
-		JLabel lblSelectTheProceedures = new JLabel(
-				"Please select the patient and proceedures performed to generate invoice.");
-		lblSelectTheProceedures.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblSelectTheProceedures.setBounds(10, 346, 438, 14);
-		add(lblSelectTheProceedures);
 
 		JLabel lblPatient = new JLabel("Patient:");
 		lblPatient.setBounds(10, 251, 46, 14);
@@ -231,25 +228,26 @@ public class GenerateInvoice extends LayoutTemplate {
 		btnResetProc.setVisible(false);
 
 		JLabel lblTotalCosttitle = new JLabel("Total Cost:");
-		lblTotalCosttitle.setBounds(10, 298, 70, 14);
+		lblTotalCosttitle.setBounds(10, 335, 70, 14);
 		add(lblTotalCosttitle);
 
 		lblTotalCost = new JLabel("0.00");
 		lblTotalCost.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblTotalCost.setBounds(20, 321, 46, 14);
+		lblTotalCost.setBounds(22, 349, 93, 14);
 		add(lblTotalCost);
 
 		JLabel label = new JLabel("\u20AC");
 		label.setFont(new Font("Tahoma", Font.BOLD, 14));
-		label.setBounds(10, 321, 46, 14);
+		label.setBounds(10, 349, 46, 14);
 		add(label);
 
 		btnAddPatientReset = new JButton("Reset");
 		btnAddPatientReset.setBounds(125, 217, 89, 23);
 		add(btnAddPatientReset);
-		btnAddPatientReset.setVisible(false);
-		btnAddPatientReset.addActionListener(new addPatientResetListener());
-
+		
+		dp = new DatePicker();
+		add(dp);
+		
 	}
 	
 	public Patient getPatient() {
@@ -274,6 +272,14 @@ public class GenerateInvoice extends LayoutTemplate {
 
 	public void setBtnGenerateInvoice(JButton btnGenerateInvoice) {
 		this.btnGenerateInvoice = btnGenerateInvoice;
+	}
+
+	public DatePicker getDp() {
+		return dp;
+	}
+
+	public void setDp(DatePicker dp) {
+		this.dp = dp;
 	}
 
 	private TableModel listPatients() {
