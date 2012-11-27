@@ -58,10 +58,11 @@ public class ListProcedures extends LayoutTemplate {
 		listOfProcedures.add(scroller);
 		add(listOfProcedures);
 		
+		//to be implemented if I have time
 		btnSearchPatient = new JButton("Search");
 		btnSearchPatient.setBounds(197, 333, 105, 23);
 		add(btnSearchPatient);
-		btnSearchPatient.addActionListener(new searchPatientListener());
+		btnSearchPatient.addActionListener(new SearchProcedureListener());
 		btnSearchPatient.setVisible(false);
 		
 		JLabel lblNewLabel_1 = new JLabel("Procedure List");
@@ -69,21 +70,28 @@ public class ListProcedures extends LayoutTemplate {
 		lblNewLabel_1.setBounds(10, 11, 197, 14);
 		add(lblNewLabel_1);
 		
+		//to be implemented if I have time
 		JLabel lblPatientContactNumber = new JLabel("Procedure - Name");
 		lblPatientContactNumber.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblPatientContactNumber.setBounds(10, 284, 139, 14);
 		add(lblPatientContactNumber);
+		lblPatientContactNumber.setVisible(false);
 		
+		//to be implemented if I have time
 		JLabel lblRefineResults = new JLabel("Refine Results");
 		lblRefineResults.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblRefineResults.setBounds(10, 257, 139, 14);
 		add(lblRefineResults);
+		lblRefineResults.setVisible(false);
 		
+		//to be implemented if I have time
 		searchInput = new JTextField();
 		searchInput.setBounds(10, 304, 292, 20);
 		add(searchInput);
 		searchInput.setColumns(10);
-		searchInput.addKeyListener(new KeyListener() {
+		searchInput.setVisible(false);
+		//to be implemented if I have time
+		/*searchInput.addKeyListener(new KeyListener() {
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -108,7 +116,7 @@ public class ListProcedures extends LayoutTemplate {
 					btnSearchPatient.setVisible(false);
 				}
 			}
-		});
+		});*/
 	}
 
 	private TableModel listProcedures(String search){
@@ -119,7 +127,7 @@ public class ListProcedures extends LayoutTemplate {
 		}
 	}
 	
-	public class searchPatientListener implements ActionListener{
+	public class SearchProcedureListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {

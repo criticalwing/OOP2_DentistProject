@@ -16,7 +16,16 @@ public class Invoice {
 	private Date invoiceDate;
 	private boolean invoicePaid;
 	ArrayList<Procedure> procList;
-	
+
+	public Invoice(int invoice, int invoiceAmt, Date invoiceDate,
+			boolean invoicePaid) {
+		super();
+		this.invoice = invoice;
+		this.invoiceAmt = invoiceAmt;
+		this.invoiceDate = invoiceDate;
+		this.invoicePaid = invoicePaid;
+	}
+
 	public Invoice(int invoice, Date date,
 			boolean invoicePaid, ArrayList<Procedure> procList) {
 		this.invoice = invoice;

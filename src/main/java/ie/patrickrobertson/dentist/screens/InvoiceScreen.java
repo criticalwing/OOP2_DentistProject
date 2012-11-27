@@ -1,5 +1,6 @@
 package ie.patrickrobertson.dentist.screens;
 
+import ie.patrickrobertson.dentist.Invoice;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
 import ie.patrickrobertson.dentist.service.DataAccess;
@@ -28,22 +29,38 @@ import java.awt.Component;
 public class InvoiceScreen extends LayoutTemplate {
 
 	private Patient patient;
+	private Invoice invoice;
 	private ArrayList<Procedure> procedures;
 	private DataAccess dataAccess;
 	JLabel lblPatientName, lblCostFigure, lblPatientAddress, lblPatientContact;
 	private JButton btnReset;
 	private JButton btnSaveInvoice;
-	private Date today;
+	private Date date;
+	private JButton btnMarkPaid;
+	private JButton btnCancel;
 
+	public InvoiceScreen() {
 
-	public InvoiceScreen(){
-		
 	}
-	
+
+	public InvoiceScreen(Patient p, Invoice i) {
+		this.patient = p;
+		this.invoice = i;
+		this.procedures = invoice.getProcList();
+		this.date = invoice.getInvoiceDate();
+		screenGen();
+
+	}
+
 	public InvoiceScreen(Patient p, ArrayList<Procedure> procedures, Date today) {
 		this.patient = p;
 		this.procedures = procedures;
-		this.today = today;
+		this.date = today;
+		screenGen();
+
+	}
+
+	private void screenGen() {
 		SimpleDateFormat month = new SimpleDateFormat("MMMMMMMM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
@@ -116,15 +133,17 @@ public class InvoiceScreen extends LayoutTemplate {
 		btnSaveInvoice = new JButton("Save Invoice");
 		btnSaveInvoice.setBounds(283, 28, 117, 23);
 		add(btnSaveInvoice);
+		btnSaveInvoice.setVisible(false);
 
 		btnReset = new JButton("Reset");
 		btnReset.setBounds(410, 28, 89, 23);
 		add(btnReset);
-		
+		btnReset.setVisible(false);
+
 		JLabel lblDate = new JLabel("Date:");
 		lblDate.setBounds(10, 268, 46, 14);
 		add(lblDate);
-		
+
 		JPanel panel_3 = new JPanel();
 		panel_3.setAlignmentY(Component.TOP_ALIGNMENT);
 		panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -133,21 +152,54 @@ public class InvoiceScreen extends LayoutTemplate {
 		panel_3.setBounds(10, 284, 251, 31);
 		add(panel_3);
 		panel_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		JLabel lblDay = new JLabel(day.format(today));
+
+		JLabel lblDay = new JLabel(day.format(date));
 		lblDay.setFont(new Font("Tahoma", Font.BOLD, 14));
 		panel_3.add(lblDay);
-		
-		JLabel lblMonth = new JLabel(month.format(today));
+
+		JLabel lblMonth = new JLabel(month.format(date));
 		lblMonth.setFont(new Font("Tahoma", Font.BOLD, 14));
 		panel_3.add(lblMonth);
-		
-		JLabel lblYear = new JLabel(year.format(today));
+
+		JLabel lblYear = new JLabel(year.format(date));
 		lblYear.setFont(new Font("Tahoma", Font.BOLD, 14));
 		panel_3.add(lblYear);
 
+		btnMarkPaid = new JButton("Mark Paid");
+		btnMarkPaid.setBounds(283, 28, 117, 23);
+		add(btnMarkPaid);
+		btnMarkPaid.setVisible(false);
+
+		btnCancel = new JButton("Return");
+		btnCancel.setBounds(410, 28, 89, 23);
+		add(btnCancel);
+		btnCancel.setVisible(false);
+
 	}
 
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public JButton getBtnMarkPaid() {
+		return btnMarkPaid;
+	}
+
+	public void setBtnMarkPaid(JButton btnMarkPaid) {
+		this.btnMarkPaid = btnMarkPaid;
+	}
+
+	public JButton getBtnCancel() {
+		return btnCancel;
+	}
+
+	public void setBtnCancel(JButton btnCancel) {
+		this.btnCancel = btnCancel;
+	}
 
 	public JButton getBtnReset() {
 		return btnReset;
@@ -182,15 +234,15 @@ public class InvoiceScreen extends LayoutTemplate {
 	}
 
 	private String getTotalCost() {
-		
+
 		double cost = 0;
-		for(Procedure p : procedures){
+		for (Procedure p : procedures) {
 			cost += p.getProcCost();
 		}
 		DecimalFormat df = new DecimalFormat("#.##");
 		df.setPositivePrefix("€");
 		df.setMinimumFractionDigits(2);
-		return df.format(cost/100);
+		return df.format(cost / 100);
 	}
 
 	private TableModel listProcedures(ArrayList<Procedure> procedures) {

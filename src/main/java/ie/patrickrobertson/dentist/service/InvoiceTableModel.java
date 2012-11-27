@@ -1,6 +1,7 @@
 package ie.patrickrobertson.dentist.service;
 
 import ie.patrickrobertson.dentist.Invoice;
+import ie.patrickrobertson.dentist.Procedure;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -35,9 +36,11 @@ public class InvoiceTableModel extends AbstractTableModel {
 		case 1:
 			return "Date";
 		case 2:
-			return "Invoice Paid";
+			return "Paid";
 		case 3:
 			return "Total";
+		case 4:
+			return "Procedure(s)";
 		default:
 			return "x";
 		}
@@ -61,6 +64,17 @@ public class InvoiceTableModel extends AbstractTableModel {
 			df.setPositivePrefix("€");
 			df.setMinimumFractionDigits(2);
 			return df.format(x);
+		case 4:
+			String output = "";
+			for(Procedure p : invoice.getProcList()){
+				output = output.concat(p.getProcName());
+				if(invoice.getProcList().indexOf(p)==invoice.getProcList().size()-1){
+					
+				}else{
+					output = output.concat(", ");
+				}
+			}
+			return output;
 		default:
 			return "x";
 		}

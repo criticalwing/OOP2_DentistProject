@@ -8,8 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
 import javax.swing.JLabel;
 
 public class DatePicker extends JPanel {
@@ -18,6 +22,7 @@ public class DatePicker extends JPanel {
 	private JComboBox comboBoxMonth;
 	private JComboBox comboBoxYear;
 	private DefaultComboBoxModel days;
+	private Date date;
 	private JLabel lblDate;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -46,11 +51,13 @@ public class DatePicker extends JPanel {
 		add(comboBoxMonth);
 		comboBoxMonth.setSelectedItem(monthTxt);
 		comboBoxMonth.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				comboBoxDay.setModel(daysDecider((String)comboBoxMonth.getSelectedItem(),(String)comboBoxYear.getSelectedItem()));
-				
+				comboBoxDay.setModel(daysDecider(
+						(String) comboBoxMonth.getSelectedItem(),
+						(String) comboBoxYear.getSelectedItem()));
+
 			}
 		});
 
@@ -61,15 +68,17 @@ public class DatePicker extends JPanel {
 		comboBoxYear.setBounds(161, 20, 57, 20);
 		add(comboBoxYear);
 		comboBoxYear.setSelectedItem(yearTxt);
-		
+
 		lblDate = new JLabel("Date:");
 		lblDate.setBounds(0, 5, 46, 15);
 		add(lblDate);
 		comboBoxYear.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				comboBoxDay.setModel(daysDecider((String)comboBoxMonth.getSelectedItem(),(String)comboBoxYear.getSelectedItem()));
+				comboBoxDay.setModel(daysDecider(
+						(String) comboBoxMonth.getSelectedItem(),
+						(String) comboBoxYear.getSelectedItem()));
 			}
 		});
 	}
@@ -107,7 +116,6 @@ public class DatePicker extends JPanel {
 		}
 	}
 
-	
 	public JComboBox getComboBoxDay() {
 		return comboBoxDay;
 	}
@@ -132,7 +140,22 @@ public class DatePicker extends JPanel {
 		this.comboBoxYear = comboBoxYear;
 	}
 
-	
-	
-	
+	public Date getDate() {
+
+		Date today = new Date();
+		DateFormat df = new SimpleDateFormat("dd/MMMMMMM/yyyy");
+		String date = ((String) getComboBoxDay().getSelectedItem()).concat("/")
+				.concat(((String) getComboBoxMonth().getSelectedItem()).concat(
+						"/").concat(
+						(String) getComboBoxYear().getSelectedItem()));
+
+		try {
+			today = df.parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			return today;
+	}
+
 }

@@ -21,6 +21,10 @@ public class History {
 		this.dateOccured = dateOccured;
 	}
 
+	public History() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public int getHistID() {
 		return histID;
 	}

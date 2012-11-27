@@ -1,5 +1,6 @@
 package ie.patrickrobertson.dentist.service;
 
+import ie.patrickrobertson.dentist.History;
 import ie.patrickrobertson.dentist.Invoice;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
@@ -13,10 +14,6 @@ public interface DataAccess {
 	ArrayList<Procedure> getProcedures();
 	
 	ArrayList<Invoice> getInvoices();
-
-	boolean savePatient();
-
-	boolean saveProcedure();
 	
 	void addPatient(Patient patient);
 	
@@ -34,7 +31,17 @@ public interface DataAccess {
 	
 	void updatePatient(int ID, Patient updatePatient);
 	
-	String fullReport();
+	void updatePatientHistory(int patientID, History h);
+	
+	void addPatientHistory(int patientID, History h);
+	
+	void deletePatientHistory(int patientID, int historyID);
+	
+	History findPatientHistory(int patientID, int historyID);
+	
+	ArrayList<Patient> findPatientInvoice(String type);
+
+	
 	
 
 }

@@ -83,7 +83,18 @@ public class GenerateInvoice extends LayoutTemplate {
 			
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				btnAddPatient.setVisible(true);
+				String patientTitle = (String) patientListPanel.getModel()
+						.getValueAt(patientListPanel.getSelectedRow(), 1);
+				patient = GenerateInvoice.this.dataAccess.findPatientByID((int) patientListPanel
+						.getModel()
+						.getValueAt(patientListPanel.getSelectedRow(), 0));
+				lblPatientToAdd.setText(patientTitle);
+				lblPatientToAdd.setVisible(true);
+				if(lblProceduresToAdd.isVisible()){
+					btnGenerateInvoice.setVisible(true);
+				}else{
+					btnGenerateInvoice.setVisible(false);
+				}
 				
 			}
 			
@@ -101,7 +112,7 @@ public class GenerateInvoice extends LayoutTemplate {
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				btnAddPatient.setVisible(true);
+				
 				
 			}
 		});
@@ -118,6 +129,7 @@ public class GenerateInvoice extends LayoutTemplate {
 		btnGenerateInvoice = new JButton("Generate Invoice");
 		btnGenerateInvoice.setBounds(458, 337, 146, 23);
 		add(btnGenerateInvoice);
+		btnGenerateInvoice.setVisible(false);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
@@ -216,12 +228,6 @@ public class GenerateInvoice extends LayoutTemplate {
 		add(btnAddProceedure);
 		btnAddProceedure.setVisible(false);
 
-		btnAddPatient = new JButton("Add Patient");
-		btnAddPatient.setBounds(10, 217, 105, 23);
-		btnAddPatient.addActionListener(new addPatientListener());
-		add(btnAddPatient);
-		btnAddPatient.setVisible(false);
-
 		btnResetProc = new JButton("Reset");
 		btnResetProc.setBounds(458, 217, 89, 23);
 		add(btnResetProc);
@@ -236,10 +242,6 @@ public class GenerateInvoice extends LayoutTemplate {
 		lblTotalCost.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblTotalCost.setBounds(12, 349, 93, 14);
 		add(lblTotalCost);
-
-		btnAddPatientReset = new JButton("Reset");
-		btnAddPatientReset.setBounds(125, 217, 89, 23);
-		add(btnAddPatientReset);
 		
 		dp = new DatePicker();
 		add(dp);
@@ -287,22 +289,6 @@ public class GenerateInvoice extends LayoutTemplate {
 		return new ProcedureTableModel(dataAccess.getProcedures(), 3);
 	}
 
-	public class addPatientListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			String patientTitle = (String) patientListPanel.getModel()
-					.getValueAt(patientListPanel.getSelectedRow(), 1);
-			patient = dataAccess.findPatientByID((int) patientListPanel
-					.getModel()
-					.getValueAt(patientListPanel.getSelectedRow(), 0));
-			btnAddPatientReset.setVisible(true);
-			lblPatientToAdd.setText(patientTitle);
-			lblPatientToAdd.setVisible(true);
-		}
-
-	}
-
 	public class addProcedureListener implements ActionListener {
 
 		@Override
@@ -327,6 +313,11 @@ public class GenerateInvoice extends LayoutTemplate {
 			lblProceduresToAdd.setText(procList);
 			lblProceduresToAdd.setVisible(true);
 			btnResetProc.setVisible(true);
+			if(lblPatientToAdd.isVisible()){
+				btnGenerateInvoice.setVisible(true);
+			}else{
+				btnGenerateInvoice.setVisible(false);
+			}
 		}
 
 	}
@@ -340,19 +331,7 @@ public class GenerateInvoice extends LayoutTemplate {
 			lblTotalCost.setText("0.00");
 			lblProceduresToAdd.setVisible(false);
 			btnResetProc.setVisible(false);
-		}
-
-	}
-
-	public class addPatientResetListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			patient = null;
-			lblPatientToAdd.setText("");
-			lblPatientToAdd.setVisible(false);
-			btnAddPatientReset.setVisible(false);
-
+			btnGenerateInvoice.setVisible(false);
 		}
 
 	}
