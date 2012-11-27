@@ -3,7 +3,6 @@ package ie.patrickrobertson.dentist.screens;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
 import ie.patrickrobertson.dentist.service.DataAccess;
-import ie.patrickrobertson.dentist.service.JDateChooser;
 import ie.patrickrobertson.dentist.service.PatientTableModel;
 import ie.patrickrobertson.dentist.service.ProcedureTableModel;
 
@@ -12,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
@@ -24,18 +22,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.border.LineBorder;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import javax.swing.JButton;
-import javax.swing.SwingConstants;
 import java.awt.Component;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-
 import javax.swing.UIManager;
-import javax.swing.JComboBox;
 
 
 public class GenerateInvoice extends LayoutTemplate {
@@ -49,13 +42,8 @@ public class GenerateInvoice extends LayoutTemplate {
 	private JTable patientListPanel;
 	private JButton btnResetProc;
 	private JLabel lblTotalCost;
-	private JButton btnAddPatientReset;
 	private JButton btnGenerateInvoice;
-	private JButton btnAddPatient;
 	private JButton btnAddProceedure;
-	private JDateChooser dateChooser;
-	private JButton btnSelectDifferentDate;
-	private JLabel lblDate;
 	private SimpleDateFormat df;
 	private DatePicker dp;
 
@@ -238,7 +226,7 @@ public class GenerateInvoice extends LayoutTemplate {
 		lblTotalCosttitle.setBounds(10, 335, 70, 14);
 		add(lblTotalCosttitle);
 
-		lblTotalCost = new JLabel("€0.00");
+		lblTotalCost = new JLabel("0.00");
 		lblTotalCost.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblTotalCost.setBounds(12, 349, 93, 14);
 		add(lblTotalCost);
@@ -307,7 +295,7 @@ public class GenerateInvoice extends LayoutTemplate {
 								.getValueAt(i, 0)));
 			}
 			DecimalFormat df = new DecimalFormat("#.##");
-			df.setPositivePrefix("€");
+			df.setPositivePrefix("â‚¬");
 			df.setMinimumFractionDigits(2);
 			lblTotalCost.setText(df.format(totalCost));
 			lblProceduresToAdd.setText(procList);

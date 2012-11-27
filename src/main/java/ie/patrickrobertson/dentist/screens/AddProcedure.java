@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -132,7 +134,7 @@ public class AddProcedure extends LayoutTemplate {
 		public void actionPerformed(ActionEvent arg0) {
 			if (validateInput()) {
 				double d = Double.parseDouble(procCost.getText())*100;
-				Procedure p = new Procedure(procName.getText(),
+				Procedure p = new Procedure(getNextProcID(), procName.getText(),
 						(int)d);
 				dataAccess.addProcedure(p);
 
@@ -142,6 +144,14 @@ public class AddProcedure extends LayoutTemplate {
 				lblProcedureAdded.setVisible(true);
 			}
 		}
+	}
+
+	public int getNextProcID() {
+		ArrayList<Integer> iList = new ArrayList<Integer>();
+		for(Procedure p : dataAccess.getProcedures()){
+			iList.add(p.getProc());
+		}
+		return Collections.max(iList)+1;
 	}
 
 }

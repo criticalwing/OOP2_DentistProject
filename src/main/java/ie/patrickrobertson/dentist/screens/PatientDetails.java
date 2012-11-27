@@ -1,6 +1,7 @@
 package ie.patrickrobertson.dentist.screens;
 
 import ie.patrickrobertson.dentist.Patient;
+import ie.patrickrobertson.dentist.service.DataAccess;
 import ie.patrickrobertson.dentist.service.HistoryTableModel;
 import ie.patrickrobertson.dentist.service.InvoiceTableModel;
 
@@ -44,6 +45,7 @@ public class PatientDetails extends LayoutTemplate {
 	private JButton btnInvoiceEdit;
 	private JButton btnInvoiceDelete;
 	private JButton btnInvoicePaid;
+	private DataAccess dataAccess;
 
 	/**
 	 * Create the panel.
@@ -52,8 +54,9 @@ public class PatientDetails extends LayoutTemplate {
 		
 	}
 
-	public PatientDetails(Patient patient) {
+	public PatientDetails(Patient patient, DataAccess dataAccess) {
 		this.patient = patient;
+		this.dataAccess = dataAccess;
 
 		JLabel lblPatientNameTitle = new JLabel("Patient Name:");
 		lblPatientNameTitle.setBounds(109, 11, 117, 14);
@@ -362,7 +365,7 @@ public class PatientDetails extends LayoutTemplate {
 	}
 
 	private TableModel listInvoices() {
-		return new InvoiceTableModel(patient.getP_Invoice(), 5);
+		return new InvoiceTableModel(dataAccess.findPatientByID(patient.getPatient()).getP_Invoice(), 5);
 	}
 
 	private TableModel listHistory() {

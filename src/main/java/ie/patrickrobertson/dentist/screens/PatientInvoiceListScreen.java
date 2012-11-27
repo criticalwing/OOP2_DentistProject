@@ -40,6 +40,8 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 	private Patient selectedPatient;
 	private Invoice selectedInvoice;
 	private JButton btnMarkPaid;
+	private JLabel lblTotal;
+	
 
 	public PatientInvoiceListScreen() {
 
@@ -65,6 +67,10 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 			lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 			lblNewLabel.setBounds(10, 11, 620, 25);
 			add(lblNewLabel);
+			
+			lblTotal = new JLabel();
+			lblTotal.setFont(new Font("Tahoma", Font.BOLD, 12);
+			
 			listOfPatientInvoices = new JPanel();
 			listOfPatientInvoices.setBorder(new LineBorder(new Color(0, 0, 0),
 					1, true));

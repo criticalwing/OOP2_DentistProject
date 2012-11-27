@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+encoding//src/main/java/ie/patrickrobertson/dentist/screens/GenerateInvoice.java=UTF-8
+encoding//src/main/java/ie/patrickrobertson/dentist/service/InvoiceTableModel.java=UTF-8
+encoding//src/main/java/ie/patrickrobertson/dentist/service/PatientInvoiceTableModel.java=UTF-8
+encoding//src/main/java/ie/patrickrobertson/dentist/service/ProcedureTableModel.java=UTF-8

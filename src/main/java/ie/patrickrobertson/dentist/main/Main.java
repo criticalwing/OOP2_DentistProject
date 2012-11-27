@@ -387,7 +387,7 @@ public class Main {
 		setVisibilities();
 		// reload to ensure data is current
 		frame.remove(patientDetails);
-		patientDetails = new PatientDetails(p);
+		patientDetails = new PatientDetails(p, dataAccess);
 		frame.getContentPane().add(patientDetails);
 		titleBlock.setPageTitleLabelText("Patient Details");
 		patientDetails.setVisible(true);
@@ -452,14 +452,7 @@ public class Main {
 											.getInvoice()).concat(" Paid"))),
 					"Marked Paid Confirmation", JOptionPane.YES_NO_OPTION);
 			if (n == 0) {
-				int index = patientInvoiceList.getSelectedPatient()
-						.getP_Invoice()
-						.indexOf(patientInvoiceList.getSelectedInvoice());
-				dataAccess
-						.findPatientByID(
-								patientInvoiceList.getSelectedPatient()
-										.getPatient()).getP_Invoice()
-						.get(index).setInvoicePaid(true);
+				dataAccess.markInvoicePaid(patientInvoiceList.getSelectedPatient().getPatient(), patientInvoiceList.getSelectedInvoice().getInvoice());
 				patientInvoicesScreen("debtors");
 			}
 
@@ -489,12 +482,8 @@ public class Main {
 									.concat(" Paid"))),
 					"Marked Paid Confirmation", JOptionPane.YES_NO_OPTION);
 			if (n == 0) {
-				int index = invoiceScreen.getPatient().getP_Invoice()
-						.indexOf(invoiceScreen.getInvoice());
-				dataAccess
-						.findPatientByID(
-								invoiceScreen.getPatient().getPatient())
-						.getP_Invoice().get(index).setInvoicePaid(true);
+				dataAccess.markInvoicePaid(invoiceScreen.getPatient()
+						.getPatient(), invoiceScreen.getInvoice().getInvoice());
 				patientInvoicesScreen("debtors");
 			}
 		}
@@ -687,9 +676,13 @@ public class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+
 			Invoice i = new Invoice(getNextInvoiceNo(), date, false,
 					invoiceScreen.getProcedures());
-			invoiceScreen.getPatient().addPatientInvoice(i);
+
+			dataAccess.addInvoicetoPatient(invoiceScreen.getPatient()
+					.getPatient(), i);
+
 			JOptionPane.showMessageDialog(null, "Invoice added to Patient: "
 					.concat(invoiceScreen.getPatient().getPatientName()));
 			generateInvoiceScreen();

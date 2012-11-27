@@ -61,7 +61,7 @@ public class InvoiceTableModel extends AbstractTableModel {
 		case 3:
 			Double x = ((double) invoice.getInvoiceAmt())/100;
 			DecimalFormat df = new DecimalFormat("#.##");
-			df.setPositivePrefix("€");
+			df.setPositivePrefix("â‚¬");
 			df.setMinimumFractionDigits(2);
 			return df.format(x);
 		case 4:

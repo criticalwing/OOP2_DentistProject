@@ -1,6 +1,5 @@
 package ie.patrickrobertson.dentist.service;
 
-import ie.patrickrobertson.dentist.History;
 import ie.patrickrobertson.dentist.Invoice;
 import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
@@ -67,7 +66,7 @@ public class PatientInvoiceTableModel extends AbstractTableModel {
 		case 2:
 			Double x = ((double) d.getInvoice().getInvoiceAmt()) / 100;
 			DecimalFormat decF = new DecimalFormat("#.##");
-			decF.setPositivePrefix("€");
+			decF.setPositivePrefix("â‚¬");
 			decF.setMinimumFractionDigits(2);
 			return decF.format(x);
 		case 3:

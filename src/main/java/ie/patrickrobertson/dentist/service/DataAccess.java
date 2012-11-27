@@ -37,11 +37,13 @@ public interface DataAccess {
 	
 	void deletePatientHistory(int patientID, int historyID);
 	
+	void addInvoicetoPatient(int patientID, Invoice i);
+	
 	History findPatientHistory(int patientID, int historyID);
 	
 	ArrayList<Patient> findPatientInvoice(String type);
+	
+	void markInvoicePaid(int patientID, int invoiceID);
 
-	
-	
 
 }

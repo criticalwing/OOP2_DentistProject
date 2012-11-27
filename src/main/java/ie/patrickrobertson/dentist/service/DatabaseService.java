@@ -78,8 +78,10 @@ public class DatabaseService implements DataAccess {
 							invoiceRs.getBoolean("invoicePaid"));
 					// fetch procedures to add to Invoice
 					ArrayList<Procedure> procs = new ArrayList<Procedure>();
-					String procSql = "SELECT * FROM `procedure`, invoiceprocedures WHERE procedure.proc = invoiceprocedures.procedureID AND invoiceprocedures.invoiceID="
-							+ String.valueOf(invoiceRs.getInt("invoice"));
+					String procSql = "SELECT * FROM `procedure`, invoiceprocedures, patient WHERE procedure.proc = invoiceprocedures.procedureID AND invoiceprocedures.invoiceID="
+							+ String.valueOf(invoiceRs.getInt("invoice"))
+							+ " AND invoiceprocedures.patientID = "
+							+ String.valueOf(rs.getInt("patient"));
 					ResultSet procRs = DBconnect.createStatement()
 							.executeQuery(procSql);
 					while (procRs.next()) {
@@ -165,11 +167,13 @@ public class DatabaseService implements DataAccess {
 	public void addProcedure(Procedure procedure) {
 		String procedureInsert = "INSERT INTO `procedure`"
 				+ "(`proc`, `procName`, `procCost`) "
-				+ "VALUES (".concat(String.valueOf(procedure.getProc()))
-						.concat(",").concat(procedure.getProcName())
-						.concat(",")
-						.concat(String.valueOf(procedure.getProcCost()))
-						.concat(",").concat(")");
+				+ "VALUES ('"+
+				String.valueOf(procedure.getProc()) +
+				"', '" +
+				procedure.getProcName() +
+				"', '" +
+				String.valueOf(procedure.getProcCost()) +
+				"')";
 		try {
 			DBconnect.createStatement().execute(procedureInsert);
 		} catch (SQLException e) {
@@ -226,8 +230,8 @@ public class DatabaseService implements DataAccess {
 	public ArrayList<Patient> findPatientByName(String name) {
 
 		ArrayList<Patient> patients = new ArrayList<Patient>();
-		String sql = "SELECT * FROM patient WHERE patientname is LIKE '%"
-				.concat(name).concat("%'");
+		String sql = "SELECT * FROM patient WHERE patientname LIKE '%".concat(
+				name).concat("%'");
 		try {
 			ResultSet rs = DBconnect.createStatement().executeQuery(sql);
 			while (rs.next()) {
@@ -260,15 +264,14 @@ public class DatabaseService implements DataAccess {
 				ResultSet invoiceRs = DBconnect.createStatement().executeQuery(
 						invoiceSql);
 				while (invoiceRs.next()) {
-					Invoice i = new Invoice(invoiceRs.getInt("invoiceID"),
+					Invoice i = new Invoice(invoiceRs.getInt("invoice"),
 							invoiceRs.getInt("invoiceAmt"),
 							invoiceRs.getDate("invoiceDate"),
 							invoiceRs.getBoolean("invoicePaid"));
 					// fetch procedures to add to Invoice
 					ArrayList<Procedure> procs = new ArrayList<Procedure>();
-					String procSql = "Select * FROM procedure WHERE proc = (SELECT procedureID FROM invoiceprocedures WHERE invoiceID = "
-							.concat(String.valueOf(
-									invoiceRs.getInt("invoiceID")).concat("'"));
+					String procSql = "SELECT * FROM `procedure`, invoiceprocedures WHERE procedure.proc = invoiceprocedures.procedureID AND invoiceprocedures.invoiceID="
+							+ String.valueOf(invoiceRs.getInt("invoice"));
 					ResultSet procRs = DBconnect.createStatement()
 							.executeQuery(procSql);
 					while (procRs.next()) {
@@ -331,15 +334,14 @@ public class DatabaseService implements DataAccess {
 				ResultSet invoiceRs = DBconnect.createStatement().executeQuery(
 						invoiceSql);
 				while (invoiceRs.next()) {
-					Invoice i = new Invoice(invoiceRs.getInt("invoiceID"),
+					Invoice i = new Invoice(invoiceRs.getInt("invoice"),
 							invoiceRs.getInt("invoiceAmt"),
 							invoiceRs.getDate("invoiceDate"),
 							invoiceRs.getBoolean("invoicePaid"));
 					// fetch procedures to add to Invoice
 					ArrayList<Procedure> procs = new ArrayList<Procedure>();
-					String procSql = "Select * FROM procedure WHERE proc = (SELECT procedureID FROM invoiceprocedures WHERE invoiceID = "
-							.concat(String.valueOf(
-									invoiceRs.getInt("invoiceID")).concat("'"));
+					String procSql = "SELECT * FROM `procedure`, invoiceprocedures WHERE procedure.proc = invoiceprocedures.procedureID AND invoiceprocedures.invoiceID="
+							+ String.valueOf(invoiceRs.getInt("invoice"));
 					ResultSet procRs = DBconnect.createStatement()
 							.executeQuery(procSql);
 					while (procRs.next()) {
@@ -404,49 +406,37 @@ public class DatabaseService implements DataAccess {
 	@Override
 	public ArrayList<Patient> findPatientInvoice(String type) {
 		ArrayList<Patient> patientInvoices = new ArrayList<Patient>();
+		ArrayList<Patient> patientOutput = new ArrayList<Patient>();
+		String invoicesSQL;
 		if (type.equals("debtors")) {
-
-			String unpaidInvoices = "SELECT * FROM Invoice WHERE invoicePaid = 0";
-			ResultSet unpaidRS;
-			try {
-				unpaidRS = DBconnect.createStatement().executeQuery(
-						unpaidInvoices);
-
-				while (unpaidRS.next()) {
-					patientInvoices.add(findPatientByID(unpaidRS
-							.getInt("patientID")));
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return patientInvoices;
+			invoicesSQL = "SELECT DISTINCT patientID FROM Invoice WHERE invoicePaid = 0";
 		} else {
-			String paidInvoices = "SELECT * FROM Invoice WHERE invoicePaid = 1";
-			ResultSet unpaidRS;
-			try {
-				unpaidRS = DBconnect.createStatement().executeQuery(
-						paidInvoices);
-
-				while (unpaidRS.next()) {
-					patientInvoices.add(findPatientByID(unpaidRS
-							.getInt("patientID")));
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return patientInvoices;
+			invoicesSQL = "SELECT DISTINCT patientID FROM Invoice WHERE invoicePaid = 1";
 		}
+		ResultSet rs;
+		try {
+			rs = DBconnect.createStatement().executeQuery(invoicesSQL);
+
+			while (rs.next()) {
+				patientInvoices.add(findPatientByID(rs.getInt("patientID")));
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return patientInvoices;
 	}
 
 	@Override
 	public void updatePatientHistory(int PatientID, History h) {
 		SimpleDateFormat sDF = new SimpleDateFormat("yyyy/MM/dd");
-		String updateHistory = "UPDATE `history`" + "SET " + "`conditionName`='"
-				+ h.getConditionName() + "',`medication`='" + h.getMedication()
-				+ "',`dateOccured`='" + sDF.format(h.getDateOccured())
-				+ "' WHERE histID='" + String.valueOf(h.getHistID()) + "' AND `patientID`= '" + PatientID + "'";
+		String updateHistory = "UPDATE `history`" + "SET "
+				+ "`conditionName`='" + h.getConditionName()
+				+ "',`medication`='" + h.getMedication() + "',`dateOccured`='"
+				+ sDF.format(h.getDateOccured()) + "' WHERE histID='"
+				+ String.valueOf(h.getHistID()) + "' AND `patientID`= '"
+				+ PatientID + "'";
 		System.out.println(updateHistory);
 		try {
 			DBconnect.createStatement().execute(updateHistory);
@@ -462,13 +452,10 @@ public class DatabaseService implements DataAccess {
 		SimpleDateFormat sDF = new SimpleDateFormat("yyyy/MM/dd");
 		String insertHistory = "INSERT INTO `history`"
 				+ "(`histID`, `patientID`, `conditionName`, `medication`, `dateOccured`) "
-				+ "VALUES ('" + 
-				String.valueOf(h.getHistID()) + "','" +
-				String.valueOf(patientID) + "','" + 
-				h.getConditionName() + "','" +
-				h.getMedication() + "','" + 
-				sDF.format(h.getDateOccured())
-				+ "')";
+				+ "VALUES ('" + String.valueOf(h.getHistID()) + "','"
+				+ String.valueOf(patientID) + "','" + h.getConditionName()
+				+ "','" + h.getMedication() + "','"
+				+ sDF.format(h.getDateOccured()) + "')";
 		try {
 			DBconnect.createStatement().execute(insertHistory);
 		} catch (SQLException e) {
@@ -478,12 +465,11 @@ public class DatabaseService implements DataAccess {
 
 	}
 
-	
 	@Override
 	public void deletePatientHistory(int patientID, int historyID) {
-		String deleteHistory = "DELETE FROM `history` WHERE " +
-					"patientID='"+ String.valueOf(patientID) +
-					"' AND histID= '"+ String.valueOf(historyID) + "'";
+		String deleteHistory = "DELETE FROM `history` WHERE " + "patientID='"
+				+ String.valueOf(patientID) + "' AND histID= '"
+				+ String.valueOf(historyID) + "'";
 		try {
 			DBconnect.createStatement().execute(deleteHistory);
 		} catch (SQLException e) {
@@ -495,13 +481,63 @@ public class DatabaseService implements DataAccess {
 	@Override
 	public History findPatientHistory(int patientID, int historyID) {
 		History hReturn = null;
-		for(History h : findPatientByID(patientID).getP_History()){
-			if(h.getHistID()==historyID){
+		for (History h : findPatientByID(patientID).getP_History()) {
+			if (h.getHistID() == historyID) {
 				hReturn = h;
 			}
 		}
 		return hReturn;
 	}
 
-	
+	@Override
+	public void addInvoicetoPatient(int patientID, Invoice i) {
+		SimpleDateFormat sDF = new SimpleDateFormat("yyyy/MM/dd");
+		String insertInvoice = "INSERT INTO `invoice`"
+				+ "(`invoice`, `patientID`, `invoiceAmt`, `invoiceDate`, `invoicePaid`) "
+				+ "VALUES ('" + String.valueOf(i.getInvoice()) + "','"
+				+ String.valueOf(patientID) + "','"
+				+ String.valueOf(i.getInvoiceAmt()) + "','"
+				+ sDF.format(i.getInvoiceDate()) + "','0'); ";
+
+		try {
+			DBconnect.createStatement().execute(insertInvoice);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		for (Procedure p : i.getProcList()) {
+			String insertInvProc = "INSERT INTO `invoiceprocedures` (`invoiceID`, `procedureID`, `patientID`)"
+					+ "VALUES ('"
+					+ String.valueOf(i.getInvoice())
+					+ "','"
+					+ String.valueOf(p.getProc())
+					+ "','"
+					+ String.valueOf(patientID) + "')";
+			try {
+				DBconnect.createStatement().execute(insertInvProc);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@Override
+	public void markInvoicePaid(int patientID, int invoiceID) {
+
+		String payInv = "UPDATE `invoice` SET `invoicePaid` = '1' WHERE invoice = "
+				+ String.valueOf(invoiceID)
+				+ " AND patientID = "
+				+ String.valueOf(patientID);
+		try {
+			DBconnect.createStatement().execute(payInv);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 }

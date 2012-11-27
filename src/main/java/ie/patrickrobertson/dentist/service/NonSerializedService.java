@@ -510,4 +510,19 @@ public class NonSerializedService implements DataAccess {
 		return findPatientByID(patientID).getP_History().get(historyIndex);
 	}
 
+	@Override
+	public void addInvoicetoPatient(int patientID, Invoice i) {
+		findPatientByID(patientID).addPatientInvoice(i);
+	}
+
+	@Override
+	public void markInvoicePaid(int patientID, int invoiceID) {
+		for(Invoice i :findPatientByID(patientID).getP_Invoice()){
+			if(i.getInvoice()==invoiceID){
+				i.setInvoicePaid(true);
+			}
+		}
+		
+	}
+
 }

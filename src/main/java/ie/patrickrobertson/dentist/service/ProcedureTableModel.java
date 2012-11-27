@@ -56,7 +56,7 @@ public class ProcedureTableModel extends AbstractTableModel {
 		case 2:
 			Double x = ((double) procedure.getProcCost())/100;
 			DecimalFormat df = new DecimalFormat("#.##");
-			df.setPositivePrefix("€");
+			df.setPositivePrefix("â‚¬");
 			df.setMinimumFractionDigits(2);
 			return df.format(x);
 		default:
