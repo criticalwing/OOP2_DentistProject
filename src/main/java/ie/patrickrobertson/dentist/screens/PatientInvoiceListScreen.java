@@ -42,10 +42,10 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 	private JButton btnMarkPaid;
 	private JLabel lblTotal;
 	
-
-	public PatientInvoiceListScreen() {
-
+	public PatientInvoiceListScreen(){
+		
 	}
+
 
 	public PatientInvoiceListScreen(DataAccess dataAccess, String type) {
 		this.dataAccess = dataAccess;
@@ -67,9 +67,6 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 			lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 			lblNewLabel.setBounds(10, 11, 620, 25);
 			add(lblNewLabel);
-			
-			lblTotal = new JLabel();
-			lblTotal.setFont(new Font("Tahoma", Font.BOLD, 12);
 			
 			listOfPatientInvoices = new JPanel();
 			listOfPatientInvoices.setBorder(new LineBorder(new Color(0, 0, 0),
@@ -152,9 +149,20 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 
 			listOfPatientInvoices.add(scroller);
 			add(listOfPatientInvoices);
+		
 
 		}
 
+	}
+
+	private String getTotalAmount() {
+		int total = 0;
+		for(int x = 0; x<patientListPanel.getModel().getRowCount();x++){
+		String figure = (String)patientListPanel.getModel().getValueAt(x, 2);
+		total += Double.valueOf(figure.substring(1));
+		}
+		
+		return "€" + String.valueOf(total);
 	}
 
 	private void setButtons() {
