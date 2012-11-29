@@ -8,6 +8,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import ie.patrickrobertson.dentist.service.DataAccess;
 
@@ -166,14 +167,10 @@ public class DatabaseService implements DataAccess {
 	@Override
 	public void addProcedure(Procedure procedure) {
 		String procedureInsert = "INSERT INTO `procedure`"
-				+ "(`proc`, `procName`, `procCost`) "
-				+ "VALUES ('"+
-				String.valueOf(procedure.getProc()) +
-				"', '" +
-				procedure.getProcName() +
-				"', '" +
-				String.valueOf(procedure.getProcCost()) +
-				"')";
+				+ "(`proc`, `procName`, `procCost`) " + "VALUES ('"
+				+ String.valueOf(procedure.getProc()) + "', '"
+				+ procedure.getProcName() + "', '"
+				+ String.valueOf(procedure.getProcCost()) + "')";
 		try {
 			DBconnect.createStatement().execute(procedureInsert);
 		} catch (SQLException e) {
@@ -406,7 +403,6 @@ public class DatabaseService implements DataAccess {
 	@Override
 	public ArrayList<Patient> findPatientInvoice(String type) {
 		ArrayList<Patient> patientInvoices = new ArrayList<Patient>();
-		ArrayList<Patient> patientOutput = new ArrayList<Patient>();
 		String invoicesSQL;
 		if (type.equals("debtors")) {
 			invoicesSQL = "SELECT DISTINCT patientID FROM Invoice WHERE invoicePaid = 0";
@@ -540,12 +536,10 @@ public class DatabaseService implements DataAccess {
 
 	}
 
-	
 	@Override
 	public void deleteInvoice(int patientID, int invoiceID) {
 		String delInv = "DELETE FROM `invoice` WHERE `invoicePaid` = "
-				+ String.valueOf(invoiceID)
-				+ " AND patientID = "
+				+ String.valueOf(invoiceID) + " AND patientID = "
 				+ String.valueOf(patientID);
 		try {
 			DBconnect.createStatement().execute(delInv);
@@ -553,7 +547,41 @@ public class DatabaseService implements DataAccess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	@Override
+	public ArrayList<Patient> treatmentSearch(int selectedProcedureID,
+			Date dateAfter, Date dateBefore) {
+
+		SimpleDateFormat sDF = new SimpleDateFormat("yyyy-MM-dd");
+		String dateAfterSQL = sDF.format(dateAfter);
+		String dateBeforeSQL = sDF.format(dateBefore);
+		ArrayList<Patient> patients = new ArrayList<Patient>();
+		String searchSQL = ""; 
+		if (selectedProcedureID > 0) {
+			searchSQL = "SELECT DISTINCT i.patientID FROM invoice i , invoiceprocedures ip WHERE i.invoice = ip.invoiceID AND ip.procedureID = '"
+					+ selectedProcedureID
+					+ "' AND i.invoiceDate BETWEEN '"
+					+ dateBeforeSQL + "' AND '" + dateAfterSQL + "'";
+		} else {
+			searchSQL = "SELECT DISTINCT patientID FROM Invoice WHERE invoiceDate BETWEEN '"
+					+ dateBeforeSQL + "' AND '" + dateAfterSQL + "'";
+		}
+		ResultSet rs;
+		try {
+			rs = DBconnect.createStatement().executeQuery(searchSQL);
+
+			while (rs.next()) {
+				patients.add(findPatientByID(rs.getInt("patientID")));
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return patients;
+
 	}
 
 }

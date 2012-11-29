@@ -103,7 +103,8 @@ public class Main {
 		frame.getContentPane().add(welcome);
 		welcome.setVisible(true);
 		titleBlock.setVisible(false);
-		titleBlock.getBtnSaveData().addActionListener(new TitleBlockSaveListener());
+		titleBlock.getBtnSaveData().addActionListener(
+				new TitleBlockSaveListener());
 		menuBar.setVisible(false);
 
 	}
@@ -211,15 +212,16 @@ public class Main {
 
 			}
 		});
-		
-		JMenuItem mntmSearchTreatmentHistory = new JMenuItem("Search Treatment History");
+
+		JMenuItem mntmSearchTreatmentHistory = new JMenuItem(
+				"Search Treatment History");
 		mnReports.add(mntmSearchTreatmentHistory);
 		mntmSearchTreatmentHistory.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				treatmentSearchScreen();
-				
+
 			}
 		});
 
@@ -233,7 +235,6 @@ public class Main {
 		});
 
 	}
-
 
 	private void setVisibilities() {
 
@@ -250,7 +251,8 @@ public class Main {
 		historyDetails.setVisible(false);
 		patientInvoiceList.setVisible(false);
 		treatmentSearch.setVisible(false);
-		
+		treatmentSearchResults.setVisible(false);
+
 		titleBlock.setVisible(true);
 		if (systemType.equals("Serialized")) {
 			titleBlock.getBtnSaveData().setVisible(true);
@@ -471,11 +473,13 @@ public class Main {
 		frame.getContentPane().add(treatmentSearch);
 		titleBlock.setPageTitleLabelText("Search Treatment History");
 		treatmentSearch.setVisible(true);
-		treatmentSearch.getBtnResetButton().addActionListener(new TreatmentSearchResetListener());
-		treatmentSearch.getBtnSearch().addActionListener(new TreatmentSearchSearchListener());
+		treatmentSearch.getBtnResetButton().addActionListener(
+				new TreatmentSearchResetListener());
+		treatmentSearch.getBtnSearch().addActionListener(
+				new TreatmentSearchSearchListener());
 	}
-	
-	private void treatmentSearchResultsScreen(ArrayList<Patient> patients){
+
+	private void treatmentSearchResultsScreen(ArrayList<Patient> patients) {
 		setVisibilities();
 		// reload to ensure data is current
 		frame.remove(treatmentSearchResults);
@@ -483,22 +487,22 @@ public class Main {
 		frame.getContentPane().add(treatmentSearchResults);
 		titleBlock.setPageTitleLabelText("Treatment History Search Results");
 		treatmentSearchResults.setVisible(true);
-		
-
+		treatmentSearchResults.getBtnNewsearch().addActionListener(new TreatmentSearchResultsNewSearchListener());
+		treatmentSearchResults.getBtnView().addActionListener(new TreatmentSearchResultsViewListener());
 	}
-	
+
 	// Button Listeners
-	public class TreatmentSearchSearchListener implements ActionListener{
+	public class TreatmentSearchResultsViewListener implements ActionListener{
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			dataAccess.treatmentSearch(treatmentSearch.getAfterDate(), treatmentSearch.getBeforeDate(), Procedure p);
+		public void actionPerformed(ActionEvent e) {
+			patientDetailScreen(dataAccess.findPatientByID(treatmentSearchResults.getPatientID()));
 			
 		}
 		
 	}
 	
-	public class TreatmentSearchResetListener implements ActionListener{
+	public class TreatmentSearchResultsNewSearchListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -507,16 +511,39 @@ public class Main {
 		}
 		
 	}
+	
+	public class TreatmentSearchSearchListener implements ActionListener {
 
-	public class TitleBlockSaveListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			treatmentSearchResultsScreen(dataAccess.treatmentSearch(
+					treatmentSearch.getSelectedProcedureID(), treatmentSearch
+							.getAfterDate().getDate(), treatmentSearch
+							.getBeforeDate().getDate()));
+
+		}
+
+	}
+
+	public class TreatmentSearchResetListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			treatmentSearchScreen();
+
+		}
+
+	}
+
+	public class TitleBlockSaveListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			((SerializedService) dataAccess).saveData();
 		}
-		
+
 	}
-	
+
 	public class PatientDetailsInvoiceDeleteListener implements ActionListener {
 
 		@Override

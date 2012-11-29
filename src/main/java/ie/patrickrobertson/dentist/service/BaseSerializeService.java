@@ -7,10 +7,10 @@ import ie.patrickrobertson.dentist.Procedure;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 public class BaseSerializeService implements DataAccess {
 
-	
 	ArrayList<Patient> patients;
 	ArrayList<Procedure> procedures;
 	ArrayList<Invoice> invoices;
@@ -19,6 +19,7 @@ public class BaseSerializeService implements DataAccess {
 		patients = new ArrayList<Patient>();
 		procedures = new ArrayList<Procedure>();
 	}
+
 	public ArrayList<Patient> getPatients() {
 		return patients;
 	}
@@ -36,7 +37,6 @@ public class BaseSerializeService implements DataAccess {
 				for (Invoice i : p.getP_Invoice()) {
 					if (!i.isInvoicePaid()) {
 						if (!debtors.contains(p)) {
-							System.out.print(p.getPatientName().concat("debt\n"));
 							debtors.add(p);
 						}
 					}
@@ -49,7 +49,6 @@ public class BaseSerializeService implements DataAccess {
 				for (Invoice i : p.getP_Invoice()) {
 					if (i.isInvoicePaid()) {
 						if (!paid.contains(p)) {
-							System.out.print(p.getPatientName().concat("paid\n"));
 							paid.add(p);
 						}
 					}
@@ -150,40 +149,46 @@ public class BaseSerializeService implements DataAccess {
 	@Override
 	public void updatePatientHistory(int PatientID, History h) {
 		int historyIndex = 0;
-		for(History i:findPatientByID(PatientID).getP_History()){
-			if(i.getHistID()==h.getHistID()){
-				historyIndex = findPatientByID(PatientID).getP_History().indexOf(i);
+		for (History i : findPatientByID(PatientID).getP_History()) {
+			if (i.getHistID() == h.getHistID()) {
+				historyIndex = findPatientByID(PatientID).getP_History()
+						.indexOf(i);
 			}
 		}
-		findPatientByID(PatientID).getP_History().get(historyIndex).setConditionName(h.getConditionName());
-		findPatientByID(PatientID).getP_History().get(historyIndex).setMedication((h.getMedication()));
-		findPatientByID(PatientID).getP_History().get(historyIndex).setDateOccured((h.getDateOccured()));
+		findPatientByID(PatientID).getP_History().get(historyIndex)
+				.setConditionName(h.getConditionName());
+		findPatientByID(PatientID).getP_History().get(historyIndex)
+				.setMedication((h.getMedication()));
+		findPatientByID(PatientID).getP_History().get(historyIndex)
+				.setDateOccured((h.getDateOccured()));
 	}
 
 	@Override
 	public void addPatientHistory(int patientID, History h) {
 		findPatientByID(patientID).getP_History().add(h);
-		
+
 	}
 
 	@Override
 	public void deletePatientHistory(int patientID, int historyID) {
 		int historyIndex = 0;
-		for(History i:findPatientByID(patientID).getP_History()){
-			if(i.getHistID()==historyID){
-				historyIndex = findPatientByID(patientID).getP_History().indexOf(i);
+		for (History i : findPatientByID(patientID).getP_History()) {
+			if (i.getHistID() == historyID) {
+				historyIndex = findPatientByID(patientID).getP_History()
+						.indexOf(i);
 			}
 		}
 		findPatientByID(patientID).getP_History().remove(historyIndex);
-		
+
 	}
 
 	@Override
 	public History findPatientHistory(int patientID, int historyID) {
 		int historyIndex = 0;
-		for(History i:findPatientByID(patientID).getP_History()){
-			if(i.getHistID()==historyID){
-				historyIndex = findPatientByID(patientID).getP_History().indexOf(i);
+		for (History i : findPatientByID(patientID).getP_History()) {
+			if (i.getHistID() == historyID) {
+				historyIndex = findPatientByID(patientID).getP_History()
+						.indexOf(i);
 			}
 		}
 		return findPatientByID(patientID).getP_History().get(historyIndex);
@@ -196,24 +201,53 @@ public class BaseSerializeService implements DataAccess {
 
 	@Override
 	public void markInvoicePaid(int patientID, int invoiceID) {
-		for(Invoice i :findPatientByID(patientID).getP_Invoice()){
-			if(i.getInvoice()==invoiceID){
+		for (Invoice i : findPatientByID(patientID).getP_Invoice()) {
+			if (i.getInvoice() == invoiceID) {
 				i.setInvoicePaid(true);
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void deleteInvoice(int patientID, int invoiceID) {
 		int index = 0;
-		for(Invoice x : findPatientByID(patientID).getP_Invoice()){
-			if(x.getInvoice()==invoiceID){
+		for (Invoice x : findPatientByID(patientID).getP_Invoice()) {
+			if (x.getInvoice() == invoiceID) {
 				index = findPatientByID(patientID).getP_Invoice().indexOf(x);
 			}
 		}
 		findPatientByID(patientID).getP_Invoice().remove(index);
-		
+
+	}
+
+	@Override
+	public ArrayList<Patient> treatmentSearch(int selectedProcedureID,
+			Date dateBefore, Date dateAfter) {
+		ArrayList<Patient> patientOutput = new ArrayList<Patient>();
+		for (Patient p : patients) {
+
+			for (Invoice i : p.getP_Invoice()) {
+				
+				if ((i.getInvoiceDate().compareTo(dateAfter) >= 0
+						&& i.getInvoiceDate().compareTo(dateBefore) <= 0)) {
+					if (selectedProcedureID < 0) {
+						if (!patientOutput.contains(p)) {
+							patientOutput.add(p);
+						}
+					} else {
+						for (Procedure proc : i.getProcList()) {
+							if (proc.getProc() == selectedProcedureID) {
+								if (!patientOutput.contains(p)) {
+									patientOutput.add(p);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return patientOutput;
 	}
 
 }

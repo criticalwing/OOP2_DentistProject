@@ -6,6 +6,7 @@ import ie.patrickrobertson.dentist.Patient;
 import ie.patrickrobertson.dentist.Procedure;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public interface DataAccess {
 
@@ -46,6 +47,9 @@ public interface DataAccess {
 	void markInvoicePaid(int patientID, int invoiceID);
 	
 	void deleteInvoice(int patientID, int invoiceID);
+
+	ArrayList<Patient> treatmentSearch(int selectedProcedureID, Date dateAfter,
+			Date dateBefore);
 
 
 }

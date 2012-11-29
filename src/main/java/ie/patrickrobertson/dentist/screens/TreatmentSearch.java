@@ -22,7 +22,6 @@ public class TreatmentSearch extends LayoutTemplate {
 	private JScrollPane scroller;
 	private JPanel listOfProcedures;
 	private DataAccess dataAccess;
-	private Procedure selectedProcedure;
 	private DatePicker beforeDate;
 	private DatePicker afterDate;
 	private JButton btnSearch;
@@ -31,6 +30,8 @@ public class TreatmentSearch extends LayoutTemplate {
 
 	public TreatmentSearch(DataAccess dataAccess) {
 		this.dataAccess = dataAccess;
+		//intialize select Procedure to -1 to allow for people not searching by Procedure
+		selectedProcedureID = -1;
 
 		JLabel lblAfter = new JLabel("After:");
 		lblAfter.setBounds(30, 11, 46, 14);
@@ -112,7 +113,7 @@ public class TreatmentSearch extends LayoutTemplate {
 
 		JLabel lblNoteIfNo = new JLabel(
 				"Note if no procedure selected it will search all");
-		lblNoteIfNo.setBounds(30, 351, 275, 14);
+		lblNoteIfNo.setBounds(30, 351, 375, 14);
 		add(lblNoteIfNo);
 
 		btnResetButton = new JButton("Reset");
@@ -127,14 +128,6 @@ public class TreatmentSearch extends LayoutTemplate {
 			return new ProcedureTableModel(
 					dataAccess.findProcedureByName(search), 3);
 		}
-	}
-
-	public Procedure getSelectedProcedure() {
-		return selectedProcedure;
-	}
-
-	public void setSelectedProcedure(Procedure selectedProcedure) {
-		this.selectedProcedure = selectedProcedure;
 	}
 
 	public DatePicker getBeforeDate() {
@@ -169,4 +162,13 @@ public class TreatmentSearch extends LayoutTemplate {
 		this.btnResetButton = btnResetButton;
 	}
 
+	public int getSelectedProcedureID() {
+		return selectedProcedureID;
+	}
+
+	public void setSelectedProcedureID(int selectedProcedureID) {
+		this.selectedProcedureID = selectedProcedureID;
+	}
+
+	
 }
