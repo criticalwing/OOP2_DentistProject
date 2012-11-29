@@ -28,7 +28,7 @@ public class PatientDetails extends LayoutTemplate {
 	private JTextField textFieldPatientAddress;
 	private JTextField textFieldContact;
 	private JPanel panelInvoices;
-	private JTable InvoiceListTable;
+	private JTable invoiceListTable;
 	private JScrollPane scroller;
 	private Patient patient;
 	private JButton btnReset;
@@ -42,7 +42,7 @@ public class PatientDetails extends LayoutTemplate {
 	private JButton btnHistoryDelete;
 	private JButton buttonAddHistory;
 	private int selectedHistory;
-	private JButton btnInvoiceEdit;
+	private int selectedInvoice;
 	private JButton btnInvoiceDelete;
 	private JButton btnInvoicePaid;
 	private DataAccess dataAccess;
@@ -50,8 +50,8 @@ public class PatientDetails extends LayoutTemplate {
 	/**
 	 * Create the panel.
 	 */
-	public PatientDetails(){
-		
+	public PatientDetails() {
+
 	}
 
 	public PatientDetails(Patient patient, DataAccess dataAccess) {
@@ -83,7 +83,8 @@ public class PatientDetails extends LayoutTemplate {
 
 			@Override
 			public void keyTyped(KeyEvent arg0) {
-				PatientDetails.this.patient.setPatientName(textFieldPatientName.getText());
+				PatientDetails.this.patient.setPatientName(textFieldPatientName
+						.getText());
 
 			}
 
@@ -118,50 +119,60 @@ public class PatientDetails extends LayoutTemplate {
 		add(panelInvoices);
 		panelInvoices.setLayout(null);
 
-		InvoiceListTable = new JTable(listInvoices());
-		InvoiceListTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		InvoiceListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		InvoiceListTable.getColumnModel().getColumn(0).setPreferredWidth(25);
-		InvoiceListTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-		InvoiceListTable.getColumnModel().getColumn(2).setPreferredWidth(90);
-		InvoiceListTable.getColumnModel().getColumn(3).setPreferredWidth(53);
-		InvoiceListTable.getColumnModel().getColumn(4).setPreferredWidth(276);
-		InvoiceListTable.addMouseListener(new MouseListener() {
-			
+		invoiceListTable = new JTable(listInvoices());
+		invoiceListTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		invoiceListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		invoiceListTable.getColumnModel().getColumn(0).setPreferredWidth(25);
+		invoiceListTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+		invoiceListTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		invoiceListTable.getColumnModel().getColumn(3).setPreferredWidth(53);
+		invoiceListTable.getColumnModel().getColumn(4).setPreferredWidth(276);
+		invoiceListTable.addMouseListener(new MouseListener() {
+
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				btnInvoiceEdit.setVisible(true);
 				btnInvoiceDelete.setVisible(true);
-				btnInvoicePaid.setVisible(true);
-				
+				PatientDetails.this.selectedInvoice = (int) invoiceListTable
+						.getModel().getValueAt(
+								invoiceListTable.getSelectedRow(), 0);
+				if(invoiceListTable
+						.getModel().getValueAt(
+								invoiceListTable.getSelectedRow(), 2).equals("No")){
+					btnInvoicePaid.setVisible(true);
+					btnInvoiceDelete.setBounds(542, 178, 89, 23);
+				}else{
+					btnInvoicePaid.setVisible(false);
+					btnInvoiceDelete.setBounds(542, 144, 89, 23);
+				}
+
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
-		scroller = new JScrollPane(InvoiceListTable);
+		scroller = new JScrollPane(invoiceListTable);
 		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroller.setBounds(0, 0, 522, 105);
@@ -169,12 +180,12 @@ public class PatientDetails extends LayoutTemplate {
 		panelInvoices.add(scroller);
 		add(panelInvoices);
 
-		btnSave = new JButton("Save Changes");
-		btnSave.setBounds(496, 11, 135, 23);
+		btnSave = new JButton("Change Contact Details");
+		btnSave.setBounds(446, 11, 185, 23);
 		add(btnSave);
 
-		btnReset = new JButton("Cancel");
-		btnReset.setBounds(496, 48, 135, 23);
+		btnReset = new JButton("New Patient Search");
+		btnReset.setBounds(446, 48, 185, 23);
 		add(btnReset);
 
 		JLabel lblPatientId = new JLabel("Patient ID:");
@@ -257,20 +268,15 @@ public class PatientDetails extends LayoutTemplate {
 		btnHistoryDelete.setBounds(542, 337, 89, 23);
 		add(btnHistoryDelete);
 
-		btnInvoiceEdit = new JButton("Edit");
-		btnInvoiceEdit.setBounds(542, 144, 89, 23);
-		add(btnInvoiceEdit);
-
 		btnInvoiceDelete = new JButton("Delete");
 		btnInvoiceDelete.setBounds(542, 178, 89, 23);
 		add(btnInvoiceDelete);
-		
+
 		btnInvoicePaid = new JButton("Pay");
-		btnInvoicePaid.setBounds(542, 212, 89, 23);
+		btnInvoicePaid.setBounds(542, 144, 89, 23);
 		add(btnInvoicePaid);
-		
+
 		btnHistoryDelete.setVisible(false);
-		btnInvoiceEdit.setVisible(false);
 		btnInvoiceDelete.setVisible(false);
 		btnInvoicePaid.setVisible(false);
 
@@ -364,8 +370,33 @@ public class PatientDetails extends LayoutTemplate {
 		this.selectedHistory = selectedHistory;
 	}
 
+	public int getSelectedInvoice() {
+		return selectedInvoice;
+	}
+
+	public void setSelectedInvoice(int selectedInvoice) {
+		this.selectedInvoice = selectedInvoice;
+	}
+
+	public JButton getBtnInvoicePaid() {
+		return btnInvoicePaid;
+	}
+
+	public void setBtnInvoicePaid(JButton btnInvoicePaid) {
+		this.btnInvoicePaid = btnInvoicePaid;
+	}
+
+	public JButton getBtnInvoiceDelete() {
+		return btnInvoiceDelete;
+	}
+
+	public void setBtnInvoiceDelete(JButton btnInvoiceDelete) {
+		this.btnInvoiceDelete = btnInvoiceDelete;
+	}
+
 	private TableModel listInvoices() {
-		return new InvoiceTableModel(dataAccess.findPatientByID(patient.getPatient()).getP_Invoice(), 5);
+		return new InvoiceTableModel(dataAccess.findPatientByID(
+				patient.getPatient()).getP_Invoice(), 5);
 	}
 
 	private TableModel listHistory() {

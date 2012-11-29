@@ -6,6 +6,7 @@ import ie.patrickrobertson.dentist.service.DataAccess;
 import ie.patrickrobertson.dentist.service.PatientInvoiceTableModel;
 import ie.patrickrobertson.dentist.service.InvoiceTableModel;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -40,11 +41,9 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 	private Patient selectedPatient;
 	private Invoice selectedInvoice;
 	private JButton btnMarkPaid;
-	private JLabel lblTotal;
-	
 
-	public PatientInvoiceListScreen() {
-
+	public PatientInvoiceListScreen(){
+		
 	}
 
 	public PatientInvoiceListScreen(DataAccess dataAccess, String type) {
@@ -63,13 +62,6 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 			lblNewLabel.setBounds(10, 11, 620, 25);
 			add(lblNewLabel);
 		} else {
-			lblNewLabel = new JLabel("List of Invoices.");
-			lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-			lblNewLabel.setBounds(10, 11, 620, 25);
-			add(lblNewLabel);
-			
-			lblTotal = new JLabel();
-			lblTotal.setFont(new Font("Tahoma", Font.BOLD, 12);
 			
 			listOfPatientInvoices = new JPanel();
 			listOfPatientInvoices.setBorder(new LineBorder(new Color(0, 0, 0),
@@ -152,6 +144,8 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 
 			listOfPatientInvoices.add(scroller);
 			add(listOfPatientInvoices);
+			
+			setLabels();
 
 		}
 
@@ -168,6 +162,43 @@ public class PatientInvoiceListScreen extends LayoutTemplate {
 
 		btnMarkPaid.setVisible(false);
 		btnViewInvoice.setVisible(false);
+	}
+
+	private void setLabels(){
+		lblNewLabel = new JLabel("List of Invoices.");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblNewLabel.setBounds(10, 11, 620, 25);
+		add(lblNewLabel);
+		String label;
+		if(type.equals("debtors")){
+			label = "Total Outstanding";
+		}else {
+			label = "Total Paid:";
+		}
+		
+		JLabel lblTotalOutstandingTitle = new JLabel(label);
+		lblTotalOutstandingTitle.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTotalOutstandingTitle.setBounds(346, 351, 152, 23);
+		add(lblTotalOutstandingTitle);
+		
+		JLabel lblTotalOwed = new JLabel(getTotalAmount());
+		lblTotalOwed.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblTotalOwed.setBounds(508, 351, 122, 20);
+		add(lblTotalOwed);
+	}
+	
+	private String getTotalAmount() {
+		int total = 0;
+		if(patientListPanel.getModel().getRowCount()>0){
+		for(int x = 0; x<patientListPanel.getModel().getRowCount();x++){
+			String add = (String)patientListPanel.getModel().getValueAt(x, 2);
+			total += Double.valueOf(add.substring(1));
+		}
+		}
+		DecimalFormat decF = new DecimalFormat("#.##");
+		decF.setPositivePrefix("€");
+		decF.setMinimumFractionDigits(2);
+		return decF.format(total);
 	}
 
 	public JButton getBtnMarkPaid() {

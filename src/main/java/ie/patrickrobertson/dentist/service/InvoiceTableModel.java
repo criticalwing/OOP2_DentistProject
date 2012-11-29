@@ -57,20 +57,25 @@ public class InvoiceTableModel extends AbstractTableModel {
 		case 1:
 			return sDF.format(invoice.getInvoiceDate().getTime());
 		case 2:
-			return invoice.isInvoicePaid();
+			if (invoice.isInvoicePaid()) {
+				return "Yes";
+			} else {
+				return "No";
+			}
 		case 3:
-			Double x = ((double) invoice.getInvoiceAmt())/100;
+			Double x = ((double) invoice.getInvoiceAmt()) / 100;
 			DecimalFormat df = new DecimalFormat("#.##");
 			df.setPositivePrefix("€");
 			df.setMinimumFractionDigits(2);
 			return df.format(x);
 		case 4:
 			String output = "";
-			for(Procedure p : invoice.getProcList()){
+			for (Procedure p : invoice.getProcList()) {
 				output = output.concat(p.getProcName());
-				if(invoice.getProcList().indexOf(p)==invoice.getProcList().size()-1){
-					
-				}else{
+				if (invoice.getProcList().indexOf(p) == invoice.getProcList()
+						.size() - 1) {
+
+				} else {
 					output = output.concat(", ");
 				}
 			}

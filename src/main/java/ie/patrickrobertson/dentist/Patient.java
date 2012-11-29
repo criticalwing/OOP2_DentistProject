@@ -1,12 +1,17 @@
 package ie.patrickrobertson.dentist;
 //need to add static incremental number for patient number
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Patient {
+public class Patient implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int patient;
 	private String patientName, patientAdd, patientPhone, notes;
 	private ArrayList<Invoice> p_Invoice;

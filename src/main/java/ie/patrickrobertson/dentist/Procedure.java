@@ -1,9 +1,15 @@
 package ie.patrickrobertson.dentist;
-//need to add static incremental number for procedure number
+
+import java.io.Serializable;
 
 
-public class Procedure {
 
+public class Procedure implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int proc;
 	private String procName;
 	//changed it to 'pennies' to sort calc issues

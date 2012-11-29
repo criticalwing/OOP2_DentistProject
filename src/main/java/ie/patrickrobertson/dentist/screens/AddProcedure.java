@@ -120,7 +120,7 @@ public class AddProcedure extends LayoutTemplate {
 
 	private boolean validInt(String input) {
 		try {
-			int x = (int)Double.parseDouble(input)*100;
+			int x = (int) Double.parseDouble(input) * 100;
 		} catch (NumberFormatException e) {
 			return false;
 		}
@@ -133,9 +133,9 @@ public class AddProcedure extends LayoutTemplate {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (validateInput()) {
-				double d = Double.parseDouble(procCost.getText())*100;
-				Procedure p = new Procedure(getNextProcID(), procName.getText(),
-						(int)d);
+				double d = Double.parseDouble(procCost.getText()) * 100;
+				Procedure p = new Procedure(getNextProcID(),
+						procName.getText(), (int) d);
 				dataAccess.addProcedure(p);
 
 				lblProcedureAdded.setText("Procedure ".concat(
@@ -147,11 +147,15 @@ public class AddProcedure extends LayoutTemplate {
 	}
 
 	public int getNextProcID() {
-		ArrayList<Integer> iList = new ArrayList<Integer>();
-		for(Procedure p : dataAccess.getProcedures()){
-			iList.add(p.getProc());
+		if (dataAccess.getProcedures().isEmpty()) {
+			return 1;
+		} else {
+			ArrayList<Integer> iList = new ArrayList<Integer>();
+			for (Procedure p : dataAccess.getProcedures()) {
+				iList.add(p.getProc());
+			}
+			return Collections.max(iList) + 1;
 		}
-		return Collections.max(iList)+1;
 	}
 
 }

@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 
 public class TitleBlock extends JPanel {
 	private JLabel pageTitleLabel;
+	private JButton btnSaveData;
 
 	public TitleBlock() {
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -27,6 +28,12 @@ public class TitleBlock extends JPanel {
 		pageTitleLabel.setBounds(10,11, 620, 32);
 		add(pageTitleLabel);
 		
+		btnSaveData = new JButton("Commit All");
+		btnSaveData.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		btnSaveData.setBounds(540, 11, 90, 23);
+		add(btnSaveData);
+		btnSaveData.setVisible(false);
+		
 
 	}
 
@@ -37,4 +44,15 @@ public class TitleBlock extends JPanel {
 	public void setPageTitleLabelText(String title) {
 		pageTitleLabel.setText(title);
 	}
+
+	public JButton getBtnSaveData() {
+		return btnSaveData;
+	}
+
+	public void setBtnSaveData(JButton btnSaveData) {
+		this.btnSaveData = btnSaveData;
+	}
+	
+	
+	
 }

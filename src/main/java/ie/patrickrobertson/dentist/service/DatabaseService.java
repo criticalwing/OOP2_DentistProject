@@ -540,4 +540,20 @@ public class DatabaseService implements DataAccess {
 
 	}
 
+	
+	@Override
+	public void deleteInvoice(int patientID, int invoiceID) {
+		String delInv = "DELETE FROM `invoice` WHERE `invoicePaid` = "
+				+ String.valueOf(invoiceID)
+				+ " AND patientID = "
+				+ String.valueOf(patientID);
+		try {
+			DBconnect.createStatement().execute(delInv);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 }

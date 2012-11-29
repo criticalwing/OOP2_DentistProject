@@ -29,10 +29,13 @@ import ie.patrickrobertson.dentist.screens.ListProcedures;
 import ie.patrickrobertson.dentist.screens.PatientDetails;
 import ie.patrickrobertson.dentist.screens.SearchPatients;
 import ie.patrickrobertson.dentist.screens.TitleBlock;
+import ie.patrickrobertson.dentist.screens.TreatmentSearch;
+import ie.patrickrobertson.dentist.screens.TreatmentSearchResults;
 import ie.patrickrobertson.dentist.screens.Welcome;
 import ie.patrickrobertson.dentist.service.DataAccess;
 import ie.patrickrobertson.dentist.service.DatabaseService;
 import ie.patrickrobertson.dentist.service.NonSerializedService;
+import ie.patrickrobertson.dentist.service.SerializedService;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -55,6 +58,8 @@ public class Main {
 	private InvoiceScreen invoiceScreen;
 	private PatientDetails patientDetails;
 	private HistoryDetails historyDetails;
+	private TreatmentSearch treatmentSearch;
+	private TreatmentSearchResults treatmentSearchResults;
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenu mnPatients = new JMenu("Patients");
 	private JMenu mnInvoicing = new JMenu("Invoicing");
@@ -98,6 +103,7 @@ public class Main {
 		frame.getContentPane().add(welcome);
 		welcome.setVisible(true);
 		titleBlock.setVisible(false);
+		titleBlock.getBtnSaveData().addActionListener(new TitleBlockSaveListener());
 		menuBar.setVisible(false);
 
 	}
@@ -113,6 +119,8 @@ public class Main {
 		patientDetails = new PatientDetails();
 		historyDetails = new HistoryDetails();
 		patientInvoiceList = new PatientInvoiceListScreen();
+		treatmentSearch = new TreatmentSearch(dataAccess);
+		treatmentSearchResults = new TreatmentSearchResults();
 
 		frame.getContentPane().add(titleBlock);
 		frame.getContentPane().add(generateInvoice);
@@ -125,6 +133,8 @@ public class Main {
 		frame.getContentPane().add(patientDetails);
 		frame.getContentPane().add(historyDetails);
 		frame.getContentPane().add(patientInvoiceList);
+		frame.getContentPane().add(treatmentSearch);
+		frame.getContentPane().add(treatmentSearchResults);
 	}
 
 	private void systemMenu() {
@@ -201,6 +211,17 @@ public class Main {
 
 			}
 		});
+		
+		JMenuItem mntmSearchTreatmentHistory = new JMenuItem("Search Treatment History");
+		mnReports.add(mntmSearchTreatmentHistory);
+		mntmSearchTreatmentHistory.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				treatmentSearchScreen();
+				
+			}
+		});
 
 		mntmGenerateInvoice.addActionListener(new ActionListener() {
 
@@ -212,6 +233,7 @@ public class Main {
 		});
 
 	}
+
 
 	private void setVisibilities() {
 
@@ -227,6 +249,14 @@ public class Main {
 		patientDetails.setVisible(false);
 		historyDetails.setVisible(false);
 		patientInvoiceList.setVisible(false);
+		treatmentSearch.setVisible(false);
+		
+		titleBlock.setVisible(true);
+		if (systemType.equals("Serialized")) {
+			titleBlock.getBtnSaveData().setVisible(true);
+		} else {
+			titleBlock.getBtnSaveData().setVisible(false);
+		}
 	}
 
 	// the welcome screen sets the type of data Access to be used
@@ -269,6 +299,7 @@ public class Main {
 				systemType = welcome.getBtnSerialized().getText();
 				frame.setTitle("------- Biters : Dental Surgery [" + systemType
 						+ "] -------");
+				dataAccess = new SerializedService();
 				addPanels();
 				setVisibilities();
 				generateInvoiceScreen();
@@ -284,7 +315,6 @@ public class Main {
 		frame.getContentPane().add(generateInvoice);
 		titleBlock.setPageTitleLabelText("Generate Invoice");
 		generateInvoice.setVisible(true);
-		titleBlock.setVisible(true);
 		generateInvoice.getBtnGenerateInvoice().addActionListener(
 				new GenerateInvoiceListener());
 	}
@@ -296,7 +326,6 @@ public class Main {
 		titleBlock.setPageTitleLabelText("Add Patient");
 
 		addPatient.setVisible(true);
-		titleBlock.setVisible(true);
 	}
 
 	private void addProcedureScreen() {
@@ -306,7 +335,6 @@ public class Main {
 		titleBlock.setPageTitleLabelText("Add Procedure");
 
 		addProcedure.setVisible(true);
-		titleBlock.setVisible(true);
 
 	}
 
@@ -319,7 +347,6 @@ public class Main {
 		titleBlock.setPageTitleLabelText("List Procedures");
 
 		listProcedures.setVisible(true);
-		titleBlock.setVisible(true);
 
 	}
 
@@ -330,7 +357,6 @@ public class Main {
 		frame.getContentPane().add(searchPatients);
 		titleBlock.setPageTitleLabelText("Patient Details");
 		searchPatients.setVisible(true);
-		titleBlock.setVisible(true);
 		searchPatients.getBtnEdit().addActionListener(
 				new searchPatientsEditListener());
 		searchPatients.getBtnDelete().addActionListener(
@@ -346,7 +372,6 @@ public class Main {
 		// reload to ensure data is current
 		frame.remove(invoiceScreen);
 		titleBlock.setPageTitleLabelText("Patient Invoice");
-		titleBlock.setVisible(true);
 		if (type.equals("add")) {
 			invoiceScreen = new InvoiceScreen(p, procedures, date);
 			frame.getContentPane().add(invoiceScreen);
@@ -391,7 +416,6 @@ public class Main {
 		frame.getContentPane().add(patientDetails);
 		titleBlock.setPageTitleLabelText("Patient Details");
 		patientDetails.setVisible(true);
-		titleBlock.setVisible(true);
 		patientDetails.getBtnReset().addActionListener(
 				new PatientDetailResetListener());
 		patientDetails.getBtnSave().addActionListener(
@@ -402,6 +426,10 @@ public class Main {
 				new PatientDetailEditHistoryListener());
 		patientDetails.getBtnHistoryDelete().addActionListener(
 				new PatientDetailDeleteHistoryListener());
+		patientDetails.getBtnInvoicePaid().addActionListener(
+				new PatientDetailsInvoicePaidListener());
+		patientDetails.getBtnInvoiceDelete().addActionListener(
+				new PatientDetailsInvoiceDeleteListener());
 	}
 
 	private void historyDetailsScreen(Patient p, History h, String type) {
@@ -429,14 +457,115 @@ public class Main {
 			titleBlock.setPageTitleLabelText("Paid Invoices");
 		}
 		patientInvoiceList.setVisible(true);
-		titleBlock.setVisible(true);
 		patientInvoiceList.getBtnViewInvoice().addActionListener(
 				new PatientInvoiceListViewListener());
 		patientInvoiceList.getBtnMarkPaid().addActionListener(
 				new PatientInvoiceListPaidListener());
 	}
 
+	private void treatmentSearchScreen() {
+		setVisibilities();
+		// reload to ensure data is current
+		frame.remove(treatmentSearch);
+		treatmentSearch = new TreatmentSearch(dataAccess);
+		frame.getContentPane().add(treatmentSearch);
+		titleBlock.setPageTitleLabelText("Search Treatment History");
+		treatmentSearch.setVisible(true);
+		treatmentSearch.getBtnResetButton().addActionListener(new TreatmentSearchResetListener());
+		treatmentSearch.getBtnSearch().addActionListener(new TreatmentSearchSearchListener());
+	}
+	
+	private void treatmentSearchResultsScreen(ArrayList<Patient> patients){
+		setVisibilities();
+		// reload to ensure data is current
+		frame.remove(treatmentSearchResults);
+		treatmentSearchResults = new TreatmentSearchResults(patients);
+		frame.getContentPane().add(treatmentSearchResults);
+		titleBlock.setPageTitleLabelText("Treatment History Search Results");
+		treatmentSearchResults.setVisible(true);
+		
+
+	}
+	
 	// Button Listeners
+	public class TreatmentSearchSearchListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			dataAccess.treatmentSearch(treatmentSearch.getAfterDate(), treatmentSearch.getBeforeDate(), Procedure p);
+			
+		}
+		
+	}
+	
+	public class TreatmentSearchResetListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			treatmentSearchScreen();
+			
+		}
+		
+	}
+
+	public class TitleBlockSaveListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			((SerializedService) dataAccess).saveData();
+		}
+		
+	}
+	
+	public class PatientDetailsInvoiceDeleteListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			int n = JOptionPane.showConfirmDialog(
+					frame,
+					"Delete ".concat(
+							patientDetails.getPatient().getPatientName())
+							.concat("'s Invoice ID: ".concat(String.valueOf(
+									patientDetails.getSelectedInvoice())
+									.concat(" from System?"))),
+					"Marked Paid Confirmation", JOptionPane.YES_NO_OPTION);
+			if (n == 0) {
+				dataAccess.deleteInvoice(patientDetails.getPatient()
+						.getPatient(), patientDetails.getSelectedInvoice());
+				patientDetailScreen(patientDetails.getPatient());
+			}
+
+		}
+
+	}
+
+	public class PatientDetailsInvoicePaidListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int n = JOptionPane
+					.showConfirmDialog(
+							frame,
+							"Mark ".concat(
+									patientDetails.getPatient()
+											.getPatientName())
+									.concat("'s Invoice ID: ".concat(String
+											.valueOf(
+													patientDetails
+															.getSelectedInvoice())
+											.concat(" Paid"))),
+							"Marked Paid Confirmation",
+							JOptionPane.YES_NO_OPTION);
+			if (n == 0) {
+				dataAccess.markInvoicePaid(patientDetails.getPatient()
+						.getPatient(), patientDetails.getSelectedInvoice());
+				patientDetailScreen(patientDetails.getPatient());
+			}
+		}
+
+	}
+
 	public class PatientInvoiceListPaidListener implements ActionListener {
 
 		@Override
@@ -452,7 +581,9 @@ public class Main {
 											.getInvoice()).concat(" Paid"))),
 					"Marked Paid Confirmation", JOptionPane.YES_NO_OPTION);
 			if (n == 0) {
-				dataAccess.markInvoicePaid(patientInvoiceList.getSelectedPatient().getPatient(), patientInvoiceList.getSelectedInvoice().getInvoice());
+				dataAccess.markInvoicePaid(patientInvoiceList
+						.getSelectedPatient().getPatient(), patientInvoiceList
+						.getSelectedInvoice().getInvoice());
 				patientInvoicesScreen("debtors");
 			}
 

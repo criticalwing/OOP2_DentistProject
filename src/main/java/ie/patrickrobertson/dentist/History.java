@@ -1,18 +1,21 @@
 package ie.patrickrobertson.dentist;
+
 //need to add static incremental number for History number	
 
+import java.io.Serializable;
+import java.util.Date;
 
-	import java.util.Date;
-	/*import java.text.DateFormat;
-	import java.text.SimpleDateFormat;*/
+public class History implements Serializable {
 
-public class History {
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int histID;
 	private String conditionName;
 	private String medication;
 	private Date dateOccured;
-	
+
 	public History(int histID, String conditionName, String medication,
 			Date dateOccured) {
 		this.histID = histID;
@@ -63,8 +66,5 @@ public class History {
 				+ ", medication=" + medication + ", dateOccured=" + dateOccured
 				+ "]";
 	}
-	
-
-	
 
 }

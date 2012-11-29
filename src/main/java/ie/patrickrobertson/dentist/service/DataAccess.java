@@ -44,6 +44,8 @@ public interface DataAccess {
 	ArrayList<Patient> findPatientInvoice(String type);
 	
 	void markInvoicePaid(int patientID, int invoiceID);
+	
+	void deleteInvoice(int patientID, int invoiceID);
 
 
 }
