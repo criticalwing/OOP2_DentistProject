@@ -61,10 +61,15 @@ public class BaseSerializeService implements DataAccess {
 	@Override
 	public void addPatient(Patient patient) {
 		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
-		for (Patient p : patients) {
-			tempIntArray.add(p.getPatient());
+		int i;
+		if (patients.isEmpty()) {
+			i = 0;
+		} else {
+			for (Patient p : patients) {
+				tempIntArray.add(p.getPatient());
+			}
+			i = Collections.max(tempIntArray);
 		}
-		int i = Collections.max(tempIntArray);
 		patient.setPatient(i + 1);
 		patients.add(patient);
 	}
@@ -78,6 +83,24 @@ public class BaseSerializeService implements DataAccess {
 		int i = Collections.max(tempIntArray);
 		procedure.setProc(i + 1);
 		procedures.add(procedure);
+	}
+
+	public void deleteProcedure(int procedureID) {
+		int i = -1;
+		for (Procedure p : procedures) {
+			if (p.getProc() == procedureID) {
+				i = procedures.indexOf(p);
+			}
+		}
+		if (i > 0) {
+			procedures.remove(i);
+		}
+
+	}
+
+	public void updateProcedure(Procedure p) {
+		findProcedureByID(p.getProc()).setProcCost(p.getProcCost());
+		findProcedureByID(p.getProc()).setProcName(p.getProcName());
 	}
 
 	@Override
@@ -228,9 +251,9 @@ public class BaseSerializeService implements DataAccess {
 		for (Patient p : patients) {
 
 			for (Invoice i : p.getP_Invoice()) {
-				
-				if ((i.getInvoiceDate().compareTo(dateAfter) >= 0
-						&& i.getInvoiceDate().compareTo(dateBefore) <= 0)) {
+
+				if ((i.getInvoiceDate().compareTo(dateAfter) >= 0 && i
+						.getInvoiceDate().compareTo(dateBefore) <= 0)) {
 					if (selectedProcedureID < 0) {
 						if (!patientOutput.contains(p)) {
 							patientOutput.add(p);

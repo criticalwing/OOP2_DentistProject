@@ -25,13 +25,15 @@ public class AddProcedure extends LayoutTemplate {
 	private JTextField procTime;
 	private DataAccess dataAccess;
 	private JLabel lblProcedureAdded;
+	private int procedureID;
 
 	/**
 	 * Create the panel.
 	 */
 	public AddProcedure(DataAccess dataAccess) {
 		this.dataAccess = dataAccess;
-		JButton btnAddProcedure = new JButton("Add Procedure");
+		procedureID = -1;
+		JButton btnAddProcedure = new JButton("Save");
 		btnAddProcedure.setBounds(10, 287, 139, 23);
 		btnAddProcedure.addActionListener(new addProcedureListener());
 
@@ -133,17 +135,51 @@ public class AddProcedure extends LayoutTemplate {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (validateInput()) {
+				String notice = "";
 				double d = Double.parseDouble(procCost.getText()) * 100;
-				Procedure p = new Procedure(getNextProcID(),
-						procName.getText(), (int) d);
-				dataAccess.addProcedure(p);
+				if (AddProcedure.this.procedureID > 0) {
+					Procedure p = new Procedure(procedureID,
+							procName.getText(), (int) d);
+					dataAccess.updateProcedure(p);
+					notice = "Procedure ".concat(
+							procName.getText()).concat("  updated.");
+				} else {
+					Procedure p = new Procedure(getNextProcID(),
+							procName.getText(), (int) d);
+					dataAccess.addProcedure(p);
+					notice = "Procedure ".concat(
+							procName.getText()).concat(" added to the System.");
+				}
 
-				lblProcedureAdded.setText("Procedure ".concat(
-						procName.getText()).concat(" added to the System."));
+				lblProcedureAdded.setText(notice);
 				clearTextFields();
 				lblProcedureAdded.setVisible(true);
 			}
 		}
+	}
+
+	public int getProcedureID() {
+		return procedureID;
+	}
+
+	public void setProcedureID(int procedureID) {
+		this.procedureID = procedureID;
+	}
+
+	public JTextField getProcName() {
+		return procName;
+	}
+
+	public void setProcName(JTextField procName) {
+		this.procName = procName;
+	}
+
+	public JTextField getProcCost() {
+		return procCost;
+	}
+
+	public void setProcCost(JTextField procCost) {
+		this.procCost = procCost;
 	}
 
 	public int getNextProcID() {

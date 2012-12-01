@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -179,7 +180,7 @@ public class Main {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				addProcedureScreen();
+				addProcedureScreen(null);
 
 			}
 		});
@@ -330,14 +331,22 @@ public class Main {
 		addPatient.setVisible(true);
 	}
 
-	private void addProcedureScreen() {
+	private void addProcedureScreen(Procedure p) {
 
 		setVisibilities();
-
+		frame.remove(addProcedure);
+		addProcedure = new AddProcedure(dataAccess);
+		frame.getContentPane().add(addProcedure);
 		titleBlock.setPageTitleLabelText("Add Procedure");
-
 		addProcedure.setVisible(true);
-
+		if (p != null) {
+			Double x = ((double) p.getProcCost()) / 100;
+			DecimalFormat df = new DecimalFormat("#.##");
+			df.setMinimumFractionDigits(2);
+			addProcedure.getProcCost().setText(df.format(x));
+			addProcedure.getProcName().setText(p.getProcName());
+			addProcedure.setProcedureID(p.getProc());
+		}
 	}
 
 	private void listProceduresScreen() {
@@ -345,10 +354,14 @@ public class Main {
 		frame.remove(listProcedures);
 		listProcedures = new ListProcedures(dataAccess);
 		frame.getContentPane().add(listProcedures);
-
 		titleBlock.setPageTitleLabelText("List Procedures");
-
 		listProcedures.setVisible(true);
+		listProcedures.getBtnAdd().addActionListener(
+				new ListProcedureAddListener());
+		listProcedures.getBtnDelete().addActionListener(
+				new ListProcedureDeleteListener());
+		listProcedures.getBtnEdit().addActionListener(
+				new ListProcedureEditListener());
 
 	}
 
@@ -410,7 +423,7 @@ public class Main {
 
 	}
 
-	private void patientDetailScreen(Patient p) {
+	private void patientDetailScreen(String sendingScreen, Patient p) {
 		setVisibilities();
 		// reload to ensure data is current
 		frame.remove(patientDetails);
@@ -419,7 +432,7 @@ public class Main {
 		titleBlock.setPageTitleLabelText("Patient Details");
 		patientDetails.setVisible(true);
 		patientDetails.getBtnReset().addActionListener(
-				new PatientDetailResetListener());
+				new PatientDetailResetListener(sendingScreen));
 		patientDetails.getBtnSave().addActionListener(
 				new PatientDetailSaveListener());
 		patientDetails.getButtonAddHistory().addActionListener(
@@ -463,6 +476,8 @@ public class Main {
 				new PatientInvoiceListViewListener());
 		patientInvoiceList.getBtnMarkPaid().addActionListener(
 				new PatientInvoiceListPaidListener());
+		patientInvoiceList.getBtnViewPatient().addActionListener(
+				new PatientInvoiceListViewPatientListener());
 	}
 
 	private void treatmentSearchScreen() {
@@ -487,31 +502,88 @@ public class Main {
 		frame.getContentPane().add(treatmentSearchResults);
 		titleBlock.setPageTitleLabelText("Treatment History Search Results");
 		treatmentSearchResults.setVisible(true);
-		treatmentSearchResults.getBtnNewsearch().addActionListener(new TreatmentSearchResultsNewSearchListener());
-		treatmentSearchResults.getBtnView().addActionListener(new TreatmentSearchResultsViewListener());
+		treatmentSearchResults.getBtnNewsearch().addActionListener(
+				new TreatmentSearchResultsNewSearchListener());
+		treatmentSearchResults.getBtnView().addActionListener(
+				new TreatmentSearchResultsViewListener());
 	}
 
 	// Button Listeners
-	public class TreatmentSearchResultsViewListener implements ActionListener{
+
+	public class PatientInvoiceListViewPatientListener implements
+			ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			patientDetailScreen("PISearch",
+					dataAccess.findPatientByID(patientInvoiceList
+							.getSelectedPatient().getPatient()));
+		}
+
+	}
+
+	public class ListProcedureAddListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			addProcedureScreen(null);
+		}
+
+	}
+
+	public class ListProcedureDeleteListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int n = JOptionPane.showConfirmDialog(frame,
+					"Are sure you want to delete procedure: ".concat(dataAccess
+							.findProcedureByID(
+									listProcedures.getSelectedProcedureID())
+							.getProcName()), "Delete Confirmation",
+					JOptionPane.YES_NO_OPTION);
+			if (n == 0) {
+				dataAccess.deleteProcedure(listProcedures
+						.getSelectedProcedureID());
+				listProceduresScreen();
+			}
+		}
+
+	}
+
+	public class ListProcedureEditListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			addProcedureScreen(dataAccess.findProcedureByID(listProcedures
+					.getSelectedProcedureID()));
+
+		}
+
+	}
+
+	public class TreatmentSearchResultsViewListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			patientDetailScreen(dataAccess.findPatientByID(treatmentSearchResults.getPatientID()));
-			
+			patientDetailScreen("TSearch",
+					dataAccess.findPatientByID(treatmentSearchResults
+							.getPatientID()));
+
 		}
-		
+
 	}
-	
-	public class TreatmentSearchResultsNewSearchListener implements ActionListener{
+
+	public class TreatmentSearchResultsNewSearchListener implements
+			ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			treatmentSearchScreen();
-			
+
 		}
-		
+
 	}
-	
+
 	public class TreatmentSearchSearchListener implements ActionListener {
 
 		@Override
@@ -539,7 +611,15 @@ public class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			((SerializedService) dataAccess).saveData();
+			int n = JOptionPane
+					.showConfirmDialog(
+							frame,
+							"Are sure you want to save all data generated this session?",
+							"Save Confirmation", JOptionPane.YES_NO_OPTION);
+			if (n == 0) {
+
+				((SerializedService) dataAccess).saveData();
+			}
 		}
 
 	}
@@ -560,7 +640,7 @@ public class Main {
 			if (n == 0) {
 				dataAccess.deleteInvoice(patientDetails.getPatient()
 						.getPatient(), patientDetails.getSelectedInvoice());
-				patientDetailScreen(patientDetails.getPatient());
+				patientDetailScreen("PSearch", patientDetails.getPatient());
 			}
 
 		}
@@ -587,7 +667,7 @@ public class Main {
 			if (n == 0) {
 				dataAccess.markInvoicePaid(patientDetails.getPatient()
 						.getPatient(), patientDetails.getSelectedInvoice());
-				patientDetailScreen(patientDetails.getPatient());
+				patientDetailScreen("PSearch", patientDetails.getPatient());
 			}
 		}
 
@@ -665,7 +745,7 @@ public class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			patientDetailScreen(historyDetails.getPatient());
+			patientDetailScreen("PSearch", historyDetails.getPatient());
 
 		}
 
@@ -686,8 +766,9 @@ public class Main {
 						.getDp().getDate());
 
 				dataAccess.updatePatientHistory(patientID, h);
-				patientDetailScreen(dataAccess.findPatientByID(historyDetails
-						.getPatient().getPatient()));
+				patientDetailScreen("PSearch",
+						dataAccess.findPatientByID(historyDetails.getPatient()
+								.getPatient()));
 			} else {
 				History h = new History(getNextHistoryID(), historyDetails
 						.getTextFieldCondition().getText(), historyDetails
@@ -696,8 +777,9 @@ public class Main {
 				dataAccess.addPatientHistory(historyDetails.getPatient()
 						.getPatient(), h);
 				// send back to PatientDetailScreen
-				patientDetailScreen(dataAccess.findPatientByID(historyDetails
-						.getPatient().getPatient()));
+				patientDetailScreen("PSearch",
+						dataAccess.findPatientByID(historyDetails.getPatient()
+								.getPatient()));
 			}
 		}
 
@@ -748,8 +830,8 @@ public class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			patientDetailScreen(dataAccess.findPatientByID(searchPatients
-					.getPatientID()));
+			patientDetailScreen("PSearch",
+					dataAccess.findPatientByID(searchPatients.getPatientID()));
 		}
 
 	}
@@ -778,11 +860,25 @@ public class Main {
 	}
 
 	public class PatientDetailResetListener implements ActionListener {
+		String sendingScreen;
+
+		public PatientDetailResetListener(String sendingScreen) {
+			this.sendingScreen = sendingScreen;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			searchPatientsScreen("All");
+			if (sendingScreen.equals("TSearch")) {
+				treatmentSearchResultsScreen(dataAccess.treatmentSearch(
+						treatmentSearch.getSelectedProcedureID(),
+						treatmentSearch.getAfterDate().getDate(),
+						treatmentSearch.getBeforeDate().getDate()));
+			} else if (sendingScreen.equals("PISearch")) {
+				patientInvoicesScreen(patientInvoiceList.getType());
+			} else {
+				searchPatientsScreen("All");
 
+			}
 		}
 
 	}
@@ -881,8 +977,8 @@ public class Main {
 
 			if (validInt(ID)) {
 				if (dataAccess.findPatientByID(Integer.valueOf(ID)) != null) {
-					patientDetailScreen(dataAccess.findPatientByID(Integer
-							.valueOf(ID)));
+					patientDetailScreen("PSearch",
+							dataAccess.findPatientByID(Integer.valueOf(ID)));
 				} else
 					JOptionPane.showMessageDialog(null,
 							"There are no Patients with ID: ".concat(ID));
@@ -930,8 +1026,9 @@ public class Main {
 				dataAccess.deletePatientHistory(patientDetails.getPatient()
 						.getPatient(), patientDetails.getSelectedHistory());
 				JOptionPane.showMessageDialog(null, "History Deleted");
-				patientDetailScreen(dataAccess.findPatientByID(patientDetails
-						.getPatient().getPatient()));
+				patientDetailScreen("PSearch",
+						dataAccess.findPatientByID(patientDetails.getPatient()
+								.getPatient()));
 			}
 
 		}

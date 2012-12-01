@@ -184,7 +184,7 @@ public class PatientDetails extends LayoutTemplate {
 		btnSave.setBounds(446, 11, 185, 23);
 		add(btnSave);
 
-		btnReset = new JButton("New Patient Search");
+		btnReset = new JButton("Back");
 		btnReset.setBounds(446, 48, 185, 23);
 		add(btnReset);
 

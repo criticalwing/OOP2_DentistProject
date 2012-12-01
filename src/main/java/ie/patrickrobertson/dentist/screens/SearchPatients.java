@@ -169,7 +169,7 @@ public class SearchPatients extends LayoutTemplate {
 	}
 
 	private void loadTableData() {
-		tableModel = new PatientTableModel(patients, 4);
+		tableModel = new PatientTableModel(patients, 4, "debtors");
 	}
 
 	public ArrayList<Patient> getPatients() {

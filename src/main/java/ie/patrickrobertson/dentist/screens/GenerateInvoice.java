@@ -269,7 +269,7 @@ public class GenerateInvoice extends LayoutTemplate {
 	}
 
 	private TableModel listPatients() {
-		return new PatientTableModel(dataAccess.getPatients(), 2);
+		return new PatientTableModel(dataAccess.getPatients(), 2, "debtors");
 
 	}
 

@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.ImageIcon;
 
 public class Welcome extends LayoutTemplate {
 
@@ -30,6 +31,7 @@ public class Welcome extends LayoutTemplate {
 		welcomeMessage.setLayout(new BoxLayout(welcomeMessage, BoxLayout.Y_AXIS));
 		
 		JLabel lblWelcomeToBiters = new JLabel("Welcome to Biters!");
+		lblWelcomeToBiters.setIcon(new ImageIcon("C:\\Users\\PatrickRobertson\\workspace\\OOP2_DentistProject\\src\\main\\resources\\Teeth.gif"));
 		lblWelcomeToBiters.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblWelcomeToBiters.setFont(new Font("Tahoma", Font.PLAIN, 22));
 		welcomeMessage.add(lblWelcomeToBiters);

@@ -63,8 +63,8 @@ public class TreatmentSearch extends LayoutTemplate {
 		procedureListPanel
 				.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		procedureListPanel.getColumnModel().getColumn(0).setPreferredWidth(55);
-		procedureListPanel.getColumnModel().getColumn(1).setPreferredWidth(455);
-		procedureListPanel.getColumnModel().getColumn(2).setPreferredWidth(110);
+		procedureListPanel.getColumnModel().getColumn(1).setPreferredWidth(400);
+		procedureListPanel.getColumnModel().getColumn(2).setPreferredWidth(130);
 		procedureListPanel.addMouseListener(new MouseListener() {
 
 			@Override

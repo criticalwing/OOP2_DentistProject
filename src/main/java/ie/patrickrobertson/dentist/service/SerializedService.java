@@ -75,11 +75,11 @@ public class SerializedService extends BaseSerializeService {
 
 	public boolean saveData() {
 		deleteExistingData("src/main/resources/patients");
-		deleteExistingData("src/main/resources/procedure");
+		deleteExistingData("src/main/resources/procedures");
 		for (Patient p : patients) {
 			try {
 				String location = "src/main/resources/patients/"
-						+ p.getPatient() + ".data";
+						+ p.getPatient() + p.getPatientName() + ".data";
 				FileOutputStream f_out = new FileOutputStream(location);
 				
 				ObjectOutputStream obj_out = new ObjectOutputStream(f_out);
@@ -92,7 +92,7 @@ public class SerializedService extends BaseSerializeService {
 		for (Procedure p : procedures) {
 			try {
 				String location = "src/main/resources/procedures/"
-						+ p.getProc() + ".data";
+						+ p.getProc() + p.getProcName()+ ".data";
 				FileOutputStream f_out = new FileOutputStream(location);
 				ObjectOutputStream obj_out = new ObjectOutputStream(f_out);
 				obj_out.writeObject(p);

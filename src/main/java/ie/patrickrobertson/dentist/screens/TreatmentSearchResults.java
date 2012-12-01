@@ -143,6 +143,6 @@ public class TreatmentSearchResults extends LayoutTemplate {
 	}
 
 	private void loadTableData() {
-		tableModel = new PatientTableModel(patients, 4);
+		tableModel = new PatientTableModel(patients, 4, "debtors");
 	}
 }

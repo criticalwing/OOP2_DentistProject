@@ -1,7 +1,9 @@
 package ie.patrickrobertson.dentist.service;
 
+import ie.patrickrobertson.dentist.Invoice;
 import ie.patrickrobertson.dentist.Patient;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -10,10 +12,12 @@ public class PatientTableModel extends AbstractTableModel {
 
 	private List<Patient> patients;
 	int columns;
+	String type;
 
-	public PatientTableModel(List<Patient> patients, int columns) {
+	public PatientTableModel(List<Patient> patients, int columns, String type) {
 		this.patients = patients;
 		this.columns = columns;
+		this.type = type;
 	}
 
 	@Override
@@ -36,6 +40,11 @@ public class PatientTableModel extends AbstractTableModel {
 			return "Address";
 		case 3:
 			return "Contact";
+		case 4:
+			if (type.equals("debtors")) {
+				return "Outstanding Total";
+			} else
+				return "Paid Total";
 		default:
 			return "x";
 		}
@@ -54,13 +63,26 @@ public class PatientTableModel extends AbstractTableModel {
 			return patient.getPatientAdd();
 		case 3:
 			return patient.getPatientPhone();
-		default: return "x";
+		case 4:
+			int amount = 0;
+			for (Invoice i : patient.getP_Invoice()) {
+				if (type.equals("debtors")) {
+					if (!i.isInvoicePaid()) {
+						amount += i.getInvoiceAmt();
+					}
+				} else {
+					if (i.isInvoicePaid()) {
+						amount += i.getInvoiceAmt();
+					}
+				}
+			}
+			Double x = ((double) amount) / 100;
+			DecimalFormat decF = new DecimalFormat("#.##");
+			decF.setPositivePrefix("€");
+			decF.setMinimumFractionDigits(2);
+			return decF.format(x);
+		default:
+			return "x";
 		}
 	}
-
-	
-	
-	
-	
-	
 }

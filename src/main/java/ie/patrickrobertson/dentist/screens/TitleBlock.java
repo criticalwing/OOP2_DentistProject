@@ -12,6 +12,7 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.SwingConstants;
+import javax.swing.ImageIcon;
 
 public class TitleBlock extends JPanel {
 	private JLabel pageTitleLabel;
@@ -23,9 +24,10 @@ public class TitleBlock extends JPanel {
 		setLayout(null);
 		
 		pageTitleLabel = new JLabel("Title Holder");
+		pageTitleLabel.setIcon(new ImageIcon("C:\\Users\\PatrickRobertson\\workspace\\OOP2_DentistProject\\src\\main\\resources\\Teeth.gif"));
 		pageTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		pageTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 26));
-		pageTitleLabel.setBounds(10,11, 620, 32);
+		pageTitleLabel.setBounds(10,11, 520, 32);
 		add(pageTitleLabel);
 		
 		btnSaveData = new JButton("Commit All");
@@ -52,7 +54,4 @@ public class TitleBlock extends JPanel {
 	public void setBtnSaveData(JButton btnSaveData) {
 		this.btnSaveData = btnSaveData;
 	}
-	
-	
-	
 }

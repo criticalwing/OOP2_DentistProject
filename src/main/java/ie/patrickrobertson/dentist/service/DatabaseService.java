@@ -538,8 +538,8 @@ public class DatabaseService implements DataAccess {
 
 	@Override
 	public void deleteInvoice(int patientID, int invoiceID) {
-		String delInv = "DELETE FROM `invoice` WHERE `invoicePaid` = "
-				+ String.valueOf(invoiceID) + " AND patientID = "
+		String delInv = "DELETE FROM `invoice` WHERE `invoice` = "
+				+ String.valueOf(invoiceID) + " AND `patientID` = "
 				+ String.valueOf(patientID);
 		try {
 			DBconnect.createStatement().execute(delInv);
@@ -558,7 +558,7 @@ public class DatabaseService implements DataAccess {
 		String dateAfterSQL = sDF.format(dateAfter);
 		String dateBeforeSQL = sDF.format(dateBefore);
 		ArrayList<Patient> patients = new ArrayList<Patient>();
-		String searchSQL = ""; 
+		String searchSQL = "";
 		if (selectedProcedureID > 0) {
 			searchSQL = "SELECT DISTINCT i.patientID FROM invoice i , invoiceprocedures ip WHERE i.invoice = ip.invoiceID AND ip.procedureID = '"
 					+ selectedProcedureID
@@ -581,6 +581,34 @@ public class DatabaseService implements DataAccess {
 			e.printStackTrace();
 		}
 		return patients;
+
+	}
+
+	@Override
+	public void deleteProcedure(int procedureID) {
+		String delProc = "DELETE FROM `procedure` WHERE `proc` = "
+				+ String.valueOf(procedureID);
+		try {
+			DBconnect.createStatement().execute(delProc);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void updateProcedure(Procedure p) {
+		String updateProc = "UPDATE `procedure`" + "SET " + "`procName`='"
+				+ p.getProcName() + "',`procCost`='"
+				+ String.valueOf(p.getProcCost()) + "' WHERE `proc` = "
+				+ String.valueOf(p.getProc());
+		try {
+			DBconnect.createStatement().execute(updateProc);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

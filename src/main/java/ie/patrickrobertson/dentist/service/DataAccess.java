@@ -19,6 +19,10 @@ public interface DataAccess {
 	void addPatient(Patient patient);
 	
 	void addProcedure(Procedure procedure);
+	
+	void deleteProcedure(int procedureID);
+	
+	void updateProcedure(Procedure p);
 
 	ArrayList<Procedure> findProcedureByName(String name);
 	
