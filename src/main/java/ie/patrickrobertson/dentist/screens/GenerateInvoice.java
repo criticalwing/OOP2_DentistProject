@@ -210,14 +210,14 @@ public class GenerateInvoice extends LayoutTemplate {
 		add(lblProceduresToAdd);
 		lblProceduresToAdd.setVisible(false);
 
-		btnAddProceedure = new JButton("Add Proceedure");
-		btnAddProceedure.setBounds(312, 217, 136, 23);
+		btnAddProceedure = new JButton("Add Proc to Invoice");
+		btnAddProceedure.setBounds(312, 217, 193, 23);
 		btnAddProceedure.addActionListener(new addProcedureListener());
 		add(btnAddProceedure);
 		btnAddProceedure.setVisible(false);
 
 		btnResetProc = new JButton("Reset");
-		btnResetProc.setBounds(458, 217, 89, 23);
+		btnResetProc.setBounds(515, 217, 89, 23);
 		add(btnResetProc);
 		btnResetProc.addActionListener(new addProcedureResetListener());
 		btnResetProc.setVisible(false);

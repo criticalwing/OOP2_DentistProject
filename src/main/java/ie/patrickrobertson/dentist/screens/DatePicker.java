@@ -24,15 +24,18 @@ public class DatePicker extends JPanel {
 	private DefaultComboBoxModel days;
 	private Date date;
 	private JLabel lblDate;
+	private String monthTxt;
+	private String dayTxt;
+	private String yearTxt;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DatePicker() {
 		SimpleDateFormat month = new SimpleDateFormat("MMMMMMMM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
-		String monthTxt = month.format(Calendar.getInstance().getTime());
-		String dayTxt = day.format(Calendar.getInstance().getTime());
-		String yearTxt = year.format(Calendar.getInstance().getTime());
+		monthTxt = month.format(Calendar.getInstance().getTime());
+		dayTxt = day.format(Calendar.getInstance().getTime());
+		yearTxt = year.format(Calendar.getInstance().getTime());
 		setBorder(null);
 		setBounds(10, 284, 292, 40);
 		setLayout(null);
@@ -41,7 +44,9 @@ public class DatePicker extends JPanel {
 		comboBoxDay.setModel(daysDecider(monthTxt, yearTxt));
 		comboBoxDay.setBounds(0, 20, 42, 20);
 		add(comboBoxDay);
-		comboBoxDay.setSelectedItem(dayTxt);
+		//added to allow for 01 style days
+		comboBoxDay.setSelectedItem(String.valueOf(Integer.valueOf(dayTxt)));
+		
 
 		comboBoxMonth = new JComboBox();
 		comboBoxMonth.setModel(new DefaultComboBoxModel(new String[] {
@@ -62,9 +67,7 @@ public class DatePicker extends JPanel {
 		});
 
 		comboBoxYear = new JComboBox();
-		comboBoxYear.setModel(new DefaultComboBoxModel(new String[] { "2010",
-				"2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018",
-				"2019", "2020", "2021", "2022", "2023", "2024", "2025" }));
+		comboBoxYear.setModel(yearsDecider());
 		comboBoxYear.setBounds(161, 20, 57, 20);
 		add(comboBoxYear);
 		comboBoxYear.setSelectedItem(yearTxt);
@@ -85,35 +88,73 @@ public class DatePicker extends JPanel {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private DefaultComboBoxModel daysDecider(String month, String year) {
+		if (month.equals(monthTxt) && year.equals(yearTxt)) {
+			String[] days = new String[Integer.valueOf(dayTxt)];
+			for (int x = 0; x < Integer.valueOf(dayTxt); x++) {
+				days[x] = String.valueOf(x + 1);
+			}
+			return new DefaultComboBoxModel(days);
+		} else {
+			if (month.equals("February")) {
+				if (year.equals("2012") || year.equals("2016")
+						|| year.equals("2020") || year.equals("2024")
+						|| year.equals("2028")) {
+					return new DefaultComboBoxModel(new String[] { "1", "2",
+							"3", "4", "5", "6", "7", "8", "9", "10", "11",
+							"12", "13", "14", "15", "16", "17", "18", "19",
+							"20", "21", "22", "23", "24", "25", "26", "27",
+							"28", "29" });
 
-		if (month.equals("February")) {
-			if (year.equals("2012") || year.equals("2016")
-					|| year.equals("2020") || year.equals("2024")
-					|| year.equals("2028")) {
+				} else {
+					return new DefaultComboBoxModel(new String[] { "1", "2",
+							"3", "4", "5", "6", "7", "8", "9", "10", "11",
+							"12", "13", "14", "15", "16", "17", "18", "19",
+							"20", "21", "22", "23", "24", "25", "26", "27",
+							"28" });
+				}
+			} else if (month.equals("September") || month.equals("April")
+					|| month.equals("June") || month.equals("November")) {
 				return new DefaultComboBoxModel(new String[] { "1", "2", "3",
 						"4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
 						"14", "15", "16", "17", "18", "19", "20", "21", "22",
-						"23", "24", "25", "26", "27", "28", "29" });
-
+						"23", "24", "25", "26", "27", "28", "29", "30" });
 			} else {
 				return new DefaultComboBoxModel(new String[] { "1", "2", "3",
 						"4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
 						"14", "15", "16", "17", "18", "19", "20", "21", "22",
-						"23", "24", "25", "26", "27", "28" });
-			}
-		} else if (month.equals("September") || month.equals("April")
-				|| month.equals("June") || month.equals("November")) {
-			return new DefaultComboBoxModel(new String[] { "1", "2", "3", "4",
-					"5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-					"15", "16", "17", "18", "19", "20", "21", "22", "23", "24",
-					"25", "26", "27", "28", "29", "30" });
-		} else {
-			return new DefaultComboBoxModel(new String[] { "1", "2", "3", "4",
-					"5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-					"15", "16", "17", "18", "19", "20", "21", "22", "23", "24",
-					"25", "26", "27", "28", "29", "30", "31" });
+						"23", "24", "25", "26", "27", "28", "29", "30", "31" });
 
+			}
 		}
+	}
+	
+	private DefaultComboBoxModel monthsDecider(String year) {
+		String[] allMonths = new String[] { "January", "February", "March",
+				"April", "May", "June", "July", "August", "September",
+				"October", "November", "December" };
+		if (year.equals(yearTxt)) {
+			ArrayList<String> months = new ArrayList<String>();
+			for (String month : allMonths) {
+				if (!month.equals(monthTxt)) {
+					months.add(month);
+				} else {
+					months.add(month);
+					new DefaultComboBoxModel((String[]) months.toArray());
+				}
+			}
+		}
+		return new DefaultComboBoxModel(allMonths);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private DefaultComboBoxModel yearsDecider() {
+			String[] years = new String[Integer.valueOf(yearTxt)-2000];
+			int y = 2000;
+			for (int x = 0; x < years.length; x++) {
+				years[x] = String.valueOf(y + 1);
+				y++;
+			}
+			return new DefaultComboBoxModel(years);
 	}
 
 	public JComboBox getComboBoxDay() {

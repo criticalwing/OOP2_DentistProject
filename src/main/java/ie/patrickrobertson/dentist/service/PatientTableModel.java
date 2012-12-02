@@ -42,7 +42,7 @@ public class PatientTableModel extends AbstractTableModel {
 			return "Contact";
 		case 4:
 			if (type.equals("debtors")) {
-				return "Outstanding Total";
+				return "Total Debt";
 			} else
 				return "Paid Total";
 		default:

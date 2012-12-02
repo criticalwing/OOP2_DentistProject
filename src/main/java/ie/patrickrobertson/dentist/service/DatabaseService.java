@@ -150,12 +150,17 @@ public class DatabaseService implements DataAccess {
 	public void addPatient(Patient patient) {
 		String patientInsert = "INSERT INTO `patient`"
 				+ "(`patient`, `patientName`, `patientAdd`, `patientPhone`, `notes`) "
-				+ "VALUES (".concat(String.valueOf(patient.getPatient()))
-						.concat(",").concat(patient.getPatientName())
-						.concat(",").concat(patient.getPatientAdd())
-						.concat(",").concat(patient.getPatientPhone())
-						.concat(",").concat(patient.getNotes()).concat(",")
-						.concat(")");
+				+ "VALUES ( '"
+				+ String.valueOf(patient.getPatient())
+				+ "', '"
+				+ patient.getPatientName()
+				+ "', '"
+				+ patient.getPatientAdd()
+				+ "', '"
+				+ patient.getPatientPhone()
+				+ "', '"
+				+ patient.getNotes()
+				+ "')";
 		try {
 			DBconnect.createStatement().execute(patientInsert);
 		} catch (SQLException e) {
@@ -369,7 +374,7 @@ public class DatabaseService implements DataAccess {
 
 	@Override
 	public void deletePatient(Patient p) {
-		String patientDelete = "DELETE FROM patient WHERE patientID = "
+		String patientDelete = "DELETE FROM patient WHERE patient = "
 				+ p.getPatient();
 		try {
 			DBconnect.createStatement().execute(patientDelete);

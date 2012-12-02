@@ -92,7 +92,7 @@ public class BaseSerializeService implements DataAccess {
 				i = procedures.indexOf(p);
 			}
 		}
-		if (i > 0) {
+		if (i >= 0) {
 			procedures.remove(i);
 		}
 
