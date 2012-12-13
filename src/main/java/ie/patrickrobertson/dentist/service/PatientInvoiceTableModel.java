@@ -16,11 +16,12 @@ public class PatientInvoiceTableModel extends AbstractTableModel {
 	private List<PatientInvoice> patientsList;
 	int columns;
 
-	public PatientInvoiceTableModel(List<Patient> patients, int columns, String type) {
+	public PatientInvoiceTableModel(List<Patient> patients, int columns,
+			String type) {
 
-		if(type.equals("debtors")){
-		patientsList = genDebtorList(patients);
-		}else{
+		if (type.equals("debtors")) {
+			patientsList = genDebtorList(patients);
+		} else {
 			patientsList = genPaidList(patients);
 		}
 		this.columns = columns;
@@ -75,8 +76,8 @@ public class PatientInvoiceTableModel extends AbstractTableModel {
 			String output = "";
 			for (Procedure p : d.getInvoice().getProcList()) {
 				output = output.concat(p.getProcName());
-				if (d.getInvoice().getProcList().indexOf(p) == d.getInvoice().getProcList()
-						.size() - 1) {
+				if (d.getInvoice().getProcList().indexOf(p) == d.getInvoice()
+						.getProcList().size() - 1) {
 				} else {
 					output = output.concat(", ");
 				}
@@ -87,6 +88,7 @@ public class PatientInvoiceTableModel extends AbstractTableModel {
 		}
 
 	}
+
 	private ArrayList<PatientInvoice> genPaidList(List<Patient> patients) {
 
 		ArrayList<PatientInvoice> paid = new ArrayList<PatientInvoice>();
@@ -101,18 +103,17 @@ public class PatientInvoiceTableModel extends AbstractTableModel {
 		return paid;
 
 	}
-	
 
 	private ArrayList<PatientInvoice> genDebtorList(List<Patient> patients) {
 
 		ArrayList<PatientInvoice> debtors = new ArrayList<PatientInvoice>();
 		for (Patient p : patients) {
-			for (Invoice i : p.getP_Invoice()) {
-				if (!i.isInvoicePaid()) {
-					PatientInvoice x = new PatientInvoice(p, i);
-					debtors.add(x);
+				for (Invoice i : p.getP_Invoice()) {
+					if (!i.isInvoicePaid()) {
+						PatientInvoice x = new PatientInvoice(p, i);
+						debtors.add(x);
+					}
 				}
-			}
 		}
 		return debtors;
 

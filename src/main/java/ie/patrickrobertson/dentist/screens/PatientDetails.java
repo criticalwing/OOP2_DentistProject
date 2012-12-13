@@ -180,12 +180,12 @@ public class PatientDetails extends LayoutTemplate {
 		panelInvoices.add(scroller);
 		add(panelInvoices);
 
-		btnSave = new JButton("Change Contact Details");
-		btnSave.setBounds(446, 11, 185, 23);
+		btnSave = new JButton("Save Changes to Details");
+		btnSave.setBounds(426, 11, 205, 23);
 		add(btnSave);
 
 		btnReset = new JButton("Back");
-		btnReset.setBounds(446, 48, 185, 23);
+		btnReset.setBounds(426, 48, 205, 23);
 		add(btnReset);
 
 		JLabel lblPatientId = new JLabel("Patient ID:");

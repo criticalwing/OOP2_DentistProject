@@ -472,12 +472,16 @@ public class Main {
 			titleBlock.setPageTitleLabelText("Paid Invoices");
 		}
 		patientInvoiceList.setVisible(true);
+		if(patientInvoiceList.getBtnViewInvoice()!=null){
 		patientInvoiceList.getBtnViewInvoice().addActionListener(
 				new PatientInvoiceListViewListener());
 		patientInvoiceList.getBtnMarkPaid().addActionListener(
 				new PatientInvoiceListPaidListener());
+		}
+		if(patientInvoiceList.getBtnViewPatient()!=null){
 		patientInvoiceList.getBtnViewPatient().addActionListener(
 				new PatientInvoiceListViewPatientListener());
+		}
 	}
 
 	private void treatmentSearchScreen() {

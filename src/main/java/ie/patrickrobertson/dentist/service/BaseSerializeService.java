@@ -77,10 +77,13 @@ public class BaseSerializeService implements DataAccess {
 	@Override
 	public void addProcedure(Procedure procedure) {
 		ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
-		for (Procedure p : procedures) {
-			tempIntArray.add(p.getProc());
+		int i = 0;
+		if (!procedures.isEmpty()) {
+			for (Procedure p : procedures) {
+				tempIntArray.add(p.getProc());
+			}
+			i = Collections.max(tempIntArray);
 		}
-		int i = Collections.max(tempIntArray);
 		procedure.setProc(i + 1);
 		procedures.add(procedure);
 	}

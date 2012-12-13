@@ -148,6 +148,7 @@ public class DatabaseService implements DataAccess {
 
 	@Override
 	public void addPatient(Patient patient) {
+		patient.setPatient(getLastPatientID()+1);
 		String patientInsert = "INSERT INTO `patient`"
 				+ "(`patient`, `patientName`, `patientAdd`, `patientPhone`, `notes`) "
 				+ "VALUES ( '"
@@ -374,6 +375,12 @@ public class DatabaseService implements DataAccess {
 
 	@Override
 	public void deletePatient(Patient p) {
+		for(Invoice i :p.getP_Invoice()){
+			deleteInvoice(p.getPatient(), i.getInvoice());
+		}
+		for(History h : p.getP_History()){
+			deletePatientHistory(p.getPatient(), h.getHistID());
+		}
 		String patientDelete = "DELETE FROM patient WHERE patient = "
 				+ p.getPatient();
 		try {
@@ -382,6 +389,7 @@ public class DatabaseService implements DataAccess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 	}
 
@@ -617,4 +625,20 @@ public class DatabaseService implements DataAccess {
 
 	}
 
+	private int getLastPatientID(){
+		String query = "SELECT MAX(patient) AS max FROM `patient`";
+		try {
+			ResultSet rs = DBconnect.createStatement().executeQuery(query);
+			while(rs.first()){
+			return rs.getInt("max");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 1;
+		
+	}
+	
+	
 }
